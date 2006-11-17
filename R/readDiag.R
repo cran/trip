@@ -1,0 +1,76 @@
+
+"readDiag" <- function(x) {
+  
+  
+  data <- NULL
+  
+  for (fl in x) {
+  #x is an Argos diag file
+  
+  #x <- x[1]
+  # read the file data
+
+  d <- readLines(fl)
+
+
+  ## only keep lines with "Lon1" anywhere
+  locs <- d[grep("LON1", d, ignore.case = TRUE)]
+  # only with "date" anywhere
+  tms <- d[grep("DATE", d, ignore.case = TRUE)]
+
+
+    ##  the question marks
+  bad <- (grep("\\?", locs))
+  locs <- locs[-bad]
+  tms <- tms[-(bad - 1)]
+
+  # paste the lines together
+  dlines <- paste(locs, tms)
+  
+  ## split the lines on space
+  dlines <- strsplit(dlines, "\\s+", perl = TRUE)
+
+  reclen <- length(dlines[[1]])
+  ## munge the lines to something sensible
+  dfm <- matrix(unlist(dlines[sapply(dlines, length) == reclen]), ncol = reclen, byrow= TRUE)
+
+  ## extract only the column with lons and lats
+  lonlat <- dfm[,c(4, 7, 10, 13)]
+  dic <- dfm[, c(14, 17, 18, 21, 24)]
+
+  id <- dic[,1]
+  gmt <- as.POSIXct(strptime(paste(dic[,2], dic[,3]), "%d.%m.%y %H:%M:%S"), tz = "GMT")
+  lq <- dic[,4]
+  iq <- dic[,5]
+  
+  ## worry about S and N
+
+  ll <- as.vector(lonlat)
+
+  ll[grep("S", ll)] <- paste("-", ll[grep("S", ll)], sep = "")
+  ll <- gsub("S", "", ll)
+
+  ll[grep("N", ll)] <- paste("", ll[grep("N", ll)], sep = "")
+  ll <- gsub("N", "", ll)
+
+
+  ll[grep("E", ll)] <- paste("", ll[grep("E", ll)], sep = "")
+  ll <- gsub("E", "", ll)
+
+  ll[grep("W", ll)] <- paste("-", ll[grep("W", ll)], sep = "")
+  ll <- gsub("W", "", ll)
+
+  ll <- matrix(as.numeric(ll), ncol = 4)
+
+
+  lon <- ll[,2]
+  
+  lon2 <- ll[,4]
+
+
+  lq <- factor(lq, ordered = TRUE, levels = c("Z", "B", "A", "0", "1", "2", "3"))
+  data <- rbind(data, data.frame(lon1 = lon, lat1 = ll[,1], lon2 = lon2, lat2 = ll[,3], gmt = gmt, id = id, lq = lq, iq = iq))
+  
+  }
+  data
+}
