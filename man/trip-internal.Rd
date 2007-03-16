@@ -13,6 +13,7 @@
 \alias{print.summary.tordata}
 \alias{print.trip}
 \alias{recenter.trip}
+\alias{oc.col}
 %\alias{spTransform,trip-method}
 \title{Internal trip Functions}
 \description{

@@ -309,120 +309,97 @@ function (track, longlat = FALSE, push = 1)
     res
 }
 
-speedfilter <- function(x, max.speed = NULL, ...) {
-	if (!is(x, "trip")) stop("only trip objects supported")
-	projected <- is.projected(x)
-	if (is.na(projected)) {
-		projected <- FALSE
-		warning("coordinate system is NA, assuming longlat . . .")
-		}
-		
-		
-	FUN <-   # root.mean.square
-		function (x, aadBUG = FALSE)
-		{
-		    sqrt(sum((x)^2, na.rm = FALSE)/(if (aadBUG) 1 else length(x)))
-		}
-	
-	#"rmsFilt" <- function (coords, time, id = factor(rep(1, length(x))), max.speed = 10,
-	## must remove "return.ok"
-	#    FUN = root.mean.square, test = FALSE, aadBUG = FALSE, pprm = 3, return.ok = TRUE,
-	#    longlat = FALSE, ...)
-	#{
-	
-			
-		if (is.null(max.speed)) {print("no max.speed given, nothing to do here");return(x) }
-		#	filt <- rmsFilt(coordinates(x),
-		#		time = x[[x@TOR.columns[1]]],
-		#		id = x[[x@TOR.columns[2]]],
-		#		max.speed = max.speed,
-		#	longlat = projected, ...)
-	longlat <- !projected
-	
-	coords <- coordinates(x)
-	time = x[[x@TOR.columns[1]]]
-	id = factor(x[[x@TOR.columns[2]]])
-		#print(longlat)
-		x <- coords[,1]
-		y <- coords[,2]
-	 test = FALSE
-	 aadBUG = FALSE
-	    pprm <- 3
-	    grps <- levels(id)
-	    if (length(x) != length(y))
-	        stop("x and y vectors must be of same\nlength")
-	    if (length(x) != length(time))
-	        stop("Length of times not equal to number of points")
-	    okFULL <- NULL
-	    for (sub in grps) {
-	        ind <- id == sub
-	        xy <- matrix(c(x[ind], y[ind]), ncol = 2)
-	        tms <- time[ind]
-	        npts <- nrow(xy)
-	        if (npts < pprm)
-	            stop("Not enough points to filter")
-	        if (pprm %%2 == 0 || pprm < 3)
-	            stop("Points per running mean should be odd and greater than 3, pprm = 3")
-	        RMS <- rep(max.speed +1, npts)
-	        offset <- pprm - 1
-	        ok <- rep(TRUE, npts)
-	        index <- 1:npts
-	        while (any(RMS > max.speed, na.rm = T)) {
-	          n <- length(which(ok))
-	
-	          speed1 <- trackDistance(xy[ok, ], longlat = longlat, ...)/(diff(unclass(tms[ok]))/3600) ## longlat TRUE or FALSE?
-	          speed2 <- trackDistance(xy[ok, ], longlat = longlat, push = 2, ...)/((unclass(tms[ok][-c(1,2)]) - unclass(tms[ok][-c(n-1,n)]))/3600)
-	
-	            #speed1 <- speed.gc(xy[ok, ], tms[ok])
-	#            speed2 <- speed.gc(xy[ok, ], tms[ok], next2 = TRUE)
-	
-	
-	
-	            thisIndex <- index[ok]
-	            npts <- length(speed1)
-	            if (npts < pprm) { 
-	                	next
-	                }
-	            sub1 <- rep(1:2, npts - offset) + rep(1:(npts - offset),
-	                each = 2)
-	            sub2 <- rep(c(0, 2), npts - offset) + rep(1:(npts -
-	                offset), each = 2)
-	            rmsRows <- cbind(matrix(speed1[sub1], ncol = offset,
-	                byrow = T), matrix(speed2[sub2], ncol = offset,
-	                byrow = T))
-	            RMS <- c(rep(0, offset), apply(rmsRows, 1, FUN,
-	                aadBUG = aadBUG))
-	            if (test)
-	                return(list(speed = speed1, rms = RMS))
-	            bad <- RMS > max.speed
-	            bad[is.na(bad)] <- FALSE
-	            segs <- cumsum(c(0, abs(diff(bad))))
-	            segs[RMS <= max.speed] <- NA
-	            peaks <- tapply(RMS, segs, which.max)
-	            for (i in levels(as.factor(segs))) {
-	                RMS[segs == i & !is.na(segs)][peaks[[i]]] <- NA
-	            }
-	            RMS[1] <- 0
-	            RMS[length(RMS)] <- 0
-	            ok[thisIndex][is.na(RMS)] <- FALSE
-	        }
-	#        ok
-	        okFULL <- c(okFULL, ok)
-	    }
-	    #return(okFULL)
-	
-	#    data.frame(x = x[okFULL], y = y[okFULL], time = time[okFULL], id = id[okFULL])
-	#}
-	
 
-		
-	filt <- okFULL	
+speedfilter <- function (x, max.speed = NULL, test = FALSE, ...)
+{
+    if (!is(x, "trip"))
+        stop("only trip objects supported")
+    projected <- is.projected(x)
+    if (is.na(projected)) {
+        projected <- FALSE
+        warning("coordinate system is NA, assuming longlat . . .")
+    }
+    FUN <- function(x, aadBUG = FALSE) {
+        sqrt(sum((x)^2, na.rm = FALSE)/(if (aadBUG) 1 else length(x)))
+    }
+    if (is.null(max.speed)) {
+        print("no max.speed given, nothing to do here")
+        return(x)
+    }
+    longlat <- !projected
+    coords <- coordinates(x)
+    time = x[[x@TOR.columns[1]]]
+    id = factor(x[[x@TOR.columns[2]]])
+    x <- coords[, 1]
+    y <- coords[, 2]
+    aadBUG = FALSE
+    pprm <- 3
+    grps <- levels(id)
+    if (length(x) != length(y))
+        stop("x and y vectors must be of same\nlength")
+    if (length(x) != length(time))
+        stop("Length of times not equal to number of points")
+    okFULL <- NULL
+if (test) res <- list(speed = numeric(0), rms = numeric(0))
+    for (sub in grps) {
+        ind <- id == sub
+        xy <- matrix(c(x[ind], y[ind]), ncol = 2)
+        tms <- time[ind]
+        npts <- nrow(xy)
+        if (npts < pprm)
+            stop("Not enough points to filter")
+        if (pprm%%2 == 0 || pprm < 3)
+            stop("Points per running mean should be odd and greater than 3, pprm = 3")
+        RMS <- rep(max.speed + 1, npts)
+        offset <- pprm - 1
+        ok <- rep(TRUE, npts)
+        index <- 1:npts
+iter <- 1
+        while (any(RMS > max.speed, na.rm = T)) {
+            n <- length(which(ok))
+            speed1 <- trackDistance(xy[ok, ], longlat = longlat,
+                ...)/(diff(unclass(tms[ok]))/3600)
+            speed2 <- trackDistance(xy[ok, ], longlat = longlat,
+                push = 2, ...)/((unclass(tms[ok][-c(1, 2)]) -
+                unclass(tms[ok][-c(n - 1, n)]))/3600)
+            thisIndex <- index[ok]
+            npts <- length(speed1)
+            if (npts < pprm) {
+                next
+            }
+            sub1 <- rep(1:2, npts - offset) + rep(1:(npts - offset),
+                each = 2)
+            sub2 <- rep(c(0, 2), npts - offset) + rep(1:(npts -
+                offset), each = 2)
+            rmsRows <- cbind(matrix(speed1[sub1], ncol = offset,
+                byrow = T), matrix(speed2[sub2], ncol = offset,
+                byrow = T))
+            RMS <- c(rep(0, offset), apply(rmsRows, 1, FUN, aadBUG = aadBUG))
 
-
-	filt
+	if (test & iter == 1) {
+                res$speed <- c(res$speed, 0, speed1)
+		    res$rms <- c(res$rms, 0, RMS)
+			break
+	}
+iter <- iter + 1
+            bad <- RMS > max.speed
+            bad[is.na(bad)] <- FALSE
+            segs <- cumsum(c(0, abs(diff(bad))))
+            segs[RMS <= max.speed] <- NA
+            peaks <- tapply(RMS, segs, which.max)
+            for (i in levels(as.factor(segs))) {
+                RMS[segs == i & !is.na(segs)][peaks[[i]]] <- NA
+            }
+            RMS[1] <- 0
+            RMS[length(RMS)] <- 0
+            ok[thisIndex][is.na(RMS)] <- FALSE
+        }
+        okFULL <- c(okFULL, ok)
+    }
+	if (test) return(res)
+    filt <- okFULL
+    filt
 }
-
-
 
 
 
@@ -449,7 +426,7 @@ readArgos <-
   ## add "correct.all" argument - just return data frame if it fails, with
   ## suggestions of how to sort/fix it
 function (x, correct.all = TRUE, dtFormat = "%Y-%m-%d %H:%M:%S",
-    tz = "GMT", duplicateTimes.eps = 1e-2, p4 = "+proj=longlat")
+    tz = "GMT", duplicateTimes.eps = 1e-2, p4 = "+proj=longlat +datum=WGS84")
 {
     dout <- NULL
     for (con in x) {
@@ -508,14 +485,14 @@ function (x, correct.all = TRUE, dtFormat = "%Y-%m-%d %H:%M:%S",
         }
         if(any(dout$longitude) > 180) {
         	cat("\nLongitudes contain values greater than 180, assuming proj.4 +over\n\n")
-        	p4 <- "+proj=longlat +over"
+        	p4 <- "+proj=longlat +datum=WGS84 +over"
         	}
         dout$class <- ordered(dout$class, levels = c("Z", "B", "A", "0", "1", "2", "3"))
 
         coordinates(dout) <- c("longitude", "latitude")
         proj4string(dout) <- CRS(p4)
-        tor <- TimeOrderedRecords(c("gmt", "ptt"))
-        test <- try(dout <- trip(dout, tor))
+        #tor <- TimeOrderedRecords(c("gmt", "ptt"))
+        test <- try(dout <- trip(dout, c("gmt", "ptt")))
         if (!is(test, "trip")) {cat("\n\n\n Data not validated: returning object of class ", class(dout), "\n");return(dout)}
         
         ## for now, only return spdftor if correct.all is TRUE

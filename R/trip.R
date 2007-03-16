@@ -292,10 +292,9 @@ setMethod("show", "trip", function(object) print.trip(object))
 setMethod("spTransform", signature(x = "trip", "CRS"),
 	function (x, CRSobj, ...)
 	{
-		require(rgdal)
 	    	
 	        xSP <- spTransform(as(x, "SpatialPointsDataFrame"), CRSobj, ...)
-	        #resSP <- spTransform(xSP, CRSobj)
+	      
 	        xDF <- x@data
 	        res <- SpatialPointsDataFrame(coords = coordinates(xSP),
 	            data = xDF, coords.nrs = numeric(0), proj4string = CRS(proj4string(xSP)))
