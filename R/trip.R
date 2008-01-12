@@ -45,7 +45,7 @@ if (!isGeneric("trip"))
 		standardGeneric("trip"))
 
 
-trip.default <- function(obj, TORnames) {
+trip <- function(obj, TORnames) {
 		## only spdf for now
 	if ( !is(obj, "SpatialPointsDataFrame") ) {
 		stop("trip only supports SpatialPointsDataFrame")	#ANY?
@@ -55,7 +55,7 @@ trip.default <- function(obj, TORnames) {
 
 }
 
-setMethod("trip", signature(obj = "SpatialPointsDataFrame", TORnames = "ANY"), trip.default)
+setMethod("trip", signature(obj = "SpatialPointsDataFrame", TORnames = "ANY"), trip)
 
 setMethod("trip", signature(obj = "ANY", TORnames = "TimeOrderedRecords"), 
 	function(obj, TORnames) {
@@ -105,44 +105,70 @@ setMethod("trip", signature(obj = "trip", TORnames = "ANY"),
 ## S3 versions
 dim.trip <- function(x) dim(as(x, "SpatialPointsDataFrame"))
 as.data.frame.trip <- function(x, ...) as.data.frame(as(x, "SpatialPointsDataFrame"), ...)
-"[[.trip" =  function(x, ...) as(x, "SpatialPointsDataFrame")[[...]]
+#"[[.trip" =  function(x, ...) as(x, "SpatialPointsDataFrame")[[...]]
 
 
-"[[<-.trip" =  function(x, i, j, value) {
-	#spdf <- as(x, "SpatialPointsDataFrame")
-	tor <- getTORnames(x)
-	x <- as(x, "SpatialPointsDataFrame")
-	## kludge for date times
-	#if (is(value, "POSIXt")) {
-	#	al <- as.data.frame(x@data)
-	#
-	#	al[[i]] <- value
-	#	x@data <- AttributeList(as.list(al))
-	#} else {x[[i]] <- value}
-	x[[i]] <- value	
-	trip(x, tor)
-}
+##  not needed -  by global "Spatial" method
+#setMethod("[[", c("trip", "ANY", "missing"), function(x, i, j, ...)
+#		x@data[[i]]
+#	)	
 
-"$.trip" = function(x, name) x@data[[name]]
 
-"$<-.trip" = function(x, i, value) {
-	tor <- getTORnames(x)
-	x <- as(x, "SpatialPointsDataFrame")
-	## kludge for date times
-	#if (is(value, "POSIXt")) {
-	#	al <- as.data.frame(x@data)
-	#	
-	#	al[[i]] <- value
-	#	x@data <- AttributeList(as.list(al))
-	#} else {x[[i]] <- value}
-	x[[i]] <- value
 	
-	trip(x, tor)
+setReplaceMethod("[[", c("trip", "ANY", "missing", "ANY"), 
+	function(x, i, j, value) {
+	
+		tor <- getTORnames(x)
+		x <- as(x, "SpatialPointsDataFrame")
+		x[[i]] <- value	
+		trip(x, tor)
 	
 	}
+)
 
+	##  not needed -  by global "Spatial" method
+	#setMethod("$", c("trip", "character"), 
+	#	function(x, name) x@data[[name]]
+	#)
+	
+	## needed to ensure validity of returned object
+	setReplaceMethod("$", c("trip", "character", "ANY"), 
+		function(x, name, value) { 
+			tor <- getTORnames(x)
+			x <- as(x, "SpatialPointsDataFrame")
+			
+			x[[name]] <- value
+				
+			trip(x, tor)
+		}
+	)
+	
+	
+#"[[<-.trip" =  function(x, i, j, value) {
+#
+#	tor <- getTORnames(x)
+#	x <- as(x, "SpatialPointsDataFrame")
+#	x[[i]] <- value	
+#	trip(x, tor)
+#}
 
-setMethod("names", "trip", function(x) names(as(x, "SpatialPointsDataFrame")))
+#"$.trip" = function(x, name) x@data[[name]]
+
+#"$<-.trip" = function(x, i, value) {
+#	tor <- getTORnames(x)
+#	x <- as(x, "SpatialPointsDataFrame")
+
+#	x[[i]] <- value
+	
+#	trip(x, tor)
+	
+#	}
+	
+##setMethod("names", "trip", function(x) names(as(x, "SpatialPointsDataFrame")))
+##setMethod("names", "trip", function(x) names(x@data))
+names.trip <- function(x) names(as(x, "SpatialPointsDataFrame"))
+"names<-.trip" <- function(x, value) { names(x@data) = value;  x@TOR.columns = value; x }
+
 
 setMethod("points", "trip", function(x, ...) points(as(x, "SpatialPointsDataFrame"), ...))
 setMethod("text", "trip", function(x, ...) text(as(x, "SpatialPointsDataFrame"), ...))
@@ -167,17 +193,12 @@ subset.trip <- function(x,  ...) {
 						return(trip(spdf, tor))
 					}
 		}
-		
-
 
 setMethod("[", "trip",
 	function(x, i, j, ... , drop = TRUE) {
 		spdf <- as(x, "SpatialPointsDataFrame")[i, j, ..., drop = drop]
-		#df <- as.data.frame(x)[i, j, ..., drop = drop]  ##  to avoid a bug in sp, duplicated column names
 		tor <- getTORnames(x)
 		if ( is.factor(spdf[[tor[2]]])) spdf[[tor[2]]] <- factor(spdf[[tor[2]]])
-		#coord.nms <- colnames(x@coords)
-		#coordinates(df) <- coord.nms
 		if (any(is.na(match(tor, names(spdf))))) {
 			cat("trip-defining Date or ID columns dropped, reverting to SpatialPointsDataFrame\n\n")
 			
@@ -213,6 +234,8 @@ summary.tordata <- function(object, ...) {
   obj[["tripID"]] <- levels(factor(ids))
   obj[["nRecords"]] <- nlocs
   obj[["TORnames"]] <- getTORnames(object)
+  obj[["tripDuration"]] <- tapply(time, ids, function(x) {x <- format(diff(range(x)))})
+
   class(obj) <- "summary.tordata"
   #invisible(obj)
   obj
@@ -225,7 +248,7 @@ summary.tordata <- function(object, ...) {
 
 
 print.summary.tordata <- function(x, ...) {
-  dsumm <- data.frame(tripID = x$tripID, No.Records = x$nRecords, startTime = x$tmins, endTime = x$tmaxs)
+  dsumm <- data.frame(tripID = x$tripID, No.Records = x$nRecords, startTime = x$tmins, endTime = x$tmaxs, tripDuration = x$tripDuration)
 
   names(dsumm)[1] <- paste(names(dsumm)[1], " (\"", x[["TORnames"]][2], "\")", sep = "")
   names(dsumm)[3] <- paste(names(dsumm)[3], " (\"", x[["TORnames"]][1], "\")", sep = "")
@@ -241,7 +264,7 @@ print.summary.tordata <- function(x, ...) {
 
 print.trip <- function(x, ...) {
   xs <- summary(x)
-  dsumm <- data.frame(tripID = xs$tripID, No.Records = xs$nRecords, startTime = xs$tmins, endTime = xs$tmaxs)
+  dsumm <- data.frame(tripID = xs$tripID, No.Records = xs$nRecords, startTime = xs$tmins, endTime = xs$tmaxs, tripDuration = xs$tripDuration)
   names(dsumm)[1] <- paste(names(dsumm)[1], " (\"", xs[["TORnames"]][2], "\")", sep = "")
   names(dsumm)[3] <- paste(names(dsumm)[3], " (\"", xs[["TORnames"]][1], "\")", sep = "")
    names(dsumm)[4] <- paste(names(dsumm)[4], " (\"", xs[["TORnames"]][1], "\")", sep = "")
@@ -287,21 +310,19 @@ setMethod("show", "trip", function(object) print.trip(object))
 
 
 
-
-
-setMethod("spTransform", signature(x = "trip", "CRS"),
-	function (x, CRSobj, ...)
-	{
+#setMethod("spTransform", signature(x = "trip", "CRS"),
+#	function (x, CRSobj, ...)
+#	{
 	    	
-	        xSP <- spTransform(as(x, "SpatialPointsDataFrame"), CRSobj, ...)
+#	        xSP <- spTransform(as(x, "SpatialPointsDataFrame"), CRSobj, ...)
 	      
-	        xDF <- x@data
-	        res <- SpatialPointsDataFrame(coords = coordinates(xSP),
-	            data = xDF, coords.nrs = numeric(0), proj4string = CRS(proj4string(xSP)))
+#	        xDF <- x@data
+#	        res <- SpatialPointsDataFrame(coords = coordinates(xSP),
+#	            data = xDF, coords.nrs = numeric(0), proj4string = CRS(proj4string(xSP)))
 
-	        trip(res, getTORnames(x))
-	    }
-)
+#	        trip(res, getTORnames(x))
+#	    }
+#)
 
 setMethod("lines", signature(x = "trip"), 
 	function(x, ...) {

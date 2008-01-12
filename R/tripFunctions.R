@@ -23,6 +23,27 @@
 ## need to clean up the "internal" functions, and ensure the arguments are passed in correctly
 ##  - and figure out which arguments are really useful anyway
 
+forceCompliance <- function(x, tor) {
+	isSpatial <- is(x, "Spatial")
+	if (isSpatial) {
+	
+		crd.nrs <- x@coords.nrs
+		x <- as.data.frame(x)
+	}
+	
+	levs <- unique(x[[tor[2]]])
+	tooshort <- tapply(x[[1]], x[[tor[2]]], function(x) length(x) < 3)
+	x <- x[x[[tor[2]]] %in% levs[!tooshort], ]
+	
+	
+	
+	
+	x <- x[!duplicated(x), ]
+	x <- x[order(x[[tor[2]]], x[[tor[1]]]), ]
+	x[[tor[1]]] <- adjust.duplicateTimes(x[[tor[1]]], x[[tor[2]]])
+	if (isSpatial) coordinates(x) <- crd.nrs
+	x
+}
 
 interpequal <- function(x, dur = NULL, quiet = FALSE) {
 
@@ -118,7 +139,7 @@ tripGrid <- function(x, grid = NULL, method = "count", dur = NULL, ...) {
 	#	       " out of a total ", hTotal, " ", uType, "\n")	
 	 
 	
-	if (method == "count") res$z <- res$z * dur
+	if (method == "countPoints") res$z <- res$z * dur
 	#if (hours) res$z <- res$z/3600
 	res
 }
@@ -355,7 +376,7 @@ if (test) res <- list(speed = numeric(0), rms = numeric(0))
         ok <- rep(TRUE, npts)
         index <- 1:npts
 iter <- 1
-        while (any(RMS > max.speed, na.rm = T)) {
+        while (any(RMS > max.speed, na.rm = TRUE)) {
             n <- length(which(ok))
             speed1 <- trackDistance(xy[ok, ], longlat = longlat,
                 ...)/(diff(unclass(tms[ok]))/3600)
@@ -372,8 +393,8 @@ iter <- 1
             sub2 <- rep(c(0, 2), npts - offset) + rep(1:(npts -
                 offset), each = 2)
             rmsRows <- cbind(matrix(speed1[sub1], ncol = offset,
-                byrow = T), matrix(speed2[sub2], ncol = offset,
-                byrow = T))
+                byrow = TRUE), matrix(speed2[sub2], ncol = offset,
+                byrow = TRUE))
             RMS <- c(rep(0, offset), apply(rmsRows, 1, FUN, aadBUG = aadBUG))
 
 	if (test & iter == 1) {
@@ -431,7 +452,7 @@ function (x, correct.all = TRUE, dtFormat = "%Y-%m-%d %H:%M:%S",
     dout <- NULL
     for (con in x) {
         old.opt <- options(warn = -1)
-        dlines <- strsplit(readLines(con), "\\s+", perl = T)
+        dlines <- strsplit(readLines(con), "\\s+", perl = TRUE)
         options(old.opt)
         loclines <- sapply(dlines, length) == 12
         if (any(loclines)) {

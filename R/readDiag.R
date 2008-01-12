@@ -21,6 +21,8 @@
 
     ##  the question marks
   bad <- (grep("\\?", locs))
+  
+  if (length(locs[-bad]) == 0) {warning(paste("no valid locations in:", fl, "\n ...ignoring"));next}
   locs <- locs[-bad]
   tms <- tms[-(bad - 1)]
 

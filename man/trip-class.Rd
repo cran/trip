@@ -3,7 +3,11 @@
 \alias{trip-class}
 \alias{[,trip-method}
 \alias{lines,trip-method}
-\alias{names,trip-method}
+\alias{names.trip}
+\alias{names<-.trip}
+\alias{$<-,trip,character}
+\alias{$<-,trip,character-method}
+\alias{[[<-,trip,ANY,missing-method}
 \alias{plot,trip,missing-method}
 \alias{points,trip-method}
 \alias{recenter,trip-method}
@@ -48,16 +52,14 @@ Class \code{"Spatial"}, by class \code{"SpatialPointsDataFrame"}.
   \describe{
      \item{trip}{\code{signature("ANY")}: try to return a trip object}
       \item{trip}{\code{signature(obj = "SpatialPointsDataFrame", TORnames = "ANY"}}{The usual construction}
-   \item{names}{\code{signature(x = "trip")}: return the column names of the 
-  data}
+
     \item{[}{\code{signature(x = "trip")}: subset rows or columns as per 
     \code{SpatialPointsDataFrame}. 
   In the case that \code{TimeOrderedRecords} columns are dropped, the object 
   reverts to the straight Spatial version. }
     \item{lines}{\code{signature(x = "trip")}: add lines to a plot with separate 
   colours for each trip}
-    \item{names}{\code{signature(x = "trip")}: return the column names of the 
-  data}
+   %% \item{names}{\code{signature(x = "trip")}: return the column names of the data}
     \item{plot}{\code{signature(x = "trip", y = "missing")}: plot as 
   \code{SpatialPoints} }
     \item{points}{\code{signature(x = "trip")}: add points to a plot using the 
