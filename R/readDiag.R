@@ -24,7 +24,7 @@
   
   if (length(locs[-bad]) == 0) {warning(paste("no valid locations in:", fl, "\n ...ignoring"));next}
   locs <- locs[-bad]
-  tms <- tms[-(bad - 1)]
+  tms <- tms[-(bad)]
 
   # paste the lines together
   dlines <- paste(locs, tms)
