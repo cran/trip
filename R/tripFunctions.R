@@ -24,12 +24,14 @@
 ##  - and figure out which arguments are really useful anyway
 
 forceCompliance <- function(x, tor) {
-	isSpatial <- is(x, "Spatial")
+	isSpatial <- is(x, "SpatialPointsDataFrame")
 	if (isSpatial) {
 	
 		crd.nrs <- x@coords.nrs
 		x <- as.data.frame(x)
-	}
+	} 
+		
+	
 	
 	levs <- unique(x[[tor[2]]])
 	tooshort <- tapply(x[[1]], x[[tor[2]]], function(x) length(x) < 3)
@@ -41,7 +43,10 @@ forceCompliance <- function(x, tor) {
 	x <- x[!duplicated(x), ]
 	x <- x[order(x[[tor[2]]], x[[tor[1]]]), ]
 	x[[tor[1]]] <- adjust.duplicateTimes(x[[tor[1]]], x[[tor[2]]])
-	if (isSpatial) coordinates(x) <- crd.nrs
+	if (isSpatial) {
+		coordinates(x) <- crd.nrs
+		x <- trip(x, tor)
+	}
 	x
 }
 
@@ -367,13 +372,18 @@ if (test) res <- list(speed = numeric(0), rms = numeric(0))
         xy <- matrix(c(x[ind], y[ind]), ncol = 2)
         tms <- time[ind]
         npts <- nrow(xy)
-        if (npts < pprm)
-            stop("Not enough points to filter")
+        
         if (pprm%%2 == 0 || pprm < 3)
             stop("Points per running mean should be odd and greater than 3, pprm = 3")
         RMS <- rep(max.speed + 1, npts)
         offset <- pprm - 1
         ok <- rep(TRUE, npts)
+        if (npts < (pprm + 1)) {
+              warning("Not enough points to filter ID: \"", sub, "\"\n continuing . . . \n")
+              okFULL <- c(okFULL, ok)
+
+              next;
+            }
         index <- 1:npts
 iter <- 1
         while (any(RMS > max.speed, na.rm = TRUE)) {

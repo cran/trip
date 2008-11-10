@@ -29,7 +29,7 @@ validtordata <- function(object) {
      ## maybe trip enforces this
   if (length(short)>0) {
     mess <- "\n  less than 3 locations for ids:\n"
-    mess <- paste(mess, paste(TORlevs[short],  collapse = "\n"), sep = "")
+    mess <- paste(mess, paste(TORlevs[short],  collapse = ","), sep = "")
     return(mess)
   }
   return(TRUE)
@@ -55,7 +55,8 @@ trip <- function(obj, TORnames) {
 
 }
 
-setMethod("trip", signature(obj = "SpatialPointsDataFrame", TORnames = "ANY"), trip)
+## removed as this was causing recursion in 2.8.0
+#setMethod("trip", signature(obj = "SpatialPointsDataFrame", TORnames = "ANY"), trip)
 
 setMethod("trip", signature(obj = "ANY", TORnames = "TimeOrderedRecords"), 
 	function(obj, TORnames) {
@@ -71,7 +72,8 @@ setMethod("trip", signature(obj = "ANY", TORnames = "TimeOrderedRecords"),
 	
 setMethod("trip", signature(obj = "trip", TORnames = "ANY"), 
 	function(obj, TORnames) {
-	trip.default(as(obj, "SpatialPointsDataFrame"), TORnames)
+	##trip.default(as(obj, "SpatialPointsDataFrame"), TORnames)
+	trip(as(obj, "SpatialPointsDataFrame"), TORnames)
 })
 
 #setMethod("trip", signature(obj = "ANY", col.nms = "TimeOrderedRecords"), 
