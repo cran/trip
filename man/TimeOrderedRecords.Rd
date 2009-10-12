@@ -25,12 +25,7 @@ getTimeID(obj)
   \code{getTORnames} obtains the column names from an object extending the class, and \code{getTimeID} returns the
   data as a data frame from an object extending the class. 
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
 
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
 \seealso{\code{\link{trip}}, for the use of this class with \code{\link[sp]{SpatialPointsDataFrame}}}
 \examples{
 

@@ -18,23 +18,7 @@ makeGridTopology(obj, cells.dim = c(100, 100), xlim = NULL, ylim = NULL, buffer 
   \item{buffer}{ ~~Describe \code{buffer} here~~ }
   \item{cellsize}{ ~~Describe \code{cellsize} here~~ }
 }
-\details{
-  ~~ If necessary, more details than the description above ~~
-}
-\value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
-}
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
 
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
 
 }

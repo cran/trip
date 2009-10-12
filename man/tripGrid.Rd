@@ -55,13 +55,7 @@ in a grid cell.
  \code{tripGrid} returns an object of class \code{SpatialGridDataFrame}, with one
  column "z" containing the time spent in each cell (usually assumed to be in hours).
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
 
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
 
 }

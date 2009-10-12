@@ -27,13 +27,7 @@ reasonable stab at what Argos believes.
 \value{
  Numeric values for given levels. 
 }
-\references{Vincent et al.  }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
 
- ~Make other sections like Warning with \section{Warning }{....} ~
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
 cls <- ordered(sample(c("Z", "B", "A", "0", "1", "2", "3"), 30, replace = TRUE),
             levels = c("Z", "B", "A", "0", "1", "2", "3"))

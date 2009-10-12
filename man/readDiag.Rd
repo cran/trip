@@ -25,14 +25,6 @@ A data frame with 8 columns.
   \item{iq}{some other thing}
 
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ 
 
- \section{Warning }{There are other data in these files not returned by this function} 
-}
-\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
-\examples{
-}
 \keyword{IO}% at least one, from doc/KEYWORDS
 \keyword{manip}% __ONLY ONE__ keyword per line

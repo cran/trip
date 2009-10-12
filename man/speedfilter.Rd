@@ -43,8 +43,8 @@ speedfilter(x, max.speed = NULL, test = FALSE, ...)
 \author{Michael D. Sumner }
 \note{     This algorithm was originally taken from IDL code by David Watts
      at the Australian Antarctic Division, and used in various other
-     environments before the development of this version 
-
+     environments before the development of this version.  
+}
 \section{Warning }{
      This algorithm is not considered to be particularly relevant to the
      problems involved with location uncertainty in animal tracking. 
@@ -56,7 +56,7 @@ speedfilter(x, max.speed = NULL, test = FALSE, ...)
      is probably too long for hundreds of points, test on smaller
      sections if unsure.
 } 
-}
+
 \seealso{ \code{\link{trip}}}
 \examples{
 
