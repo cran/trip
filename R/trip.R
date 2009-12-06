@@ -11,7 +11,7 @@ validtordata <- function(object) {
 		stop("no timeIDs set: too few rows")
 	if (ncol(tid) < 2)
 		stop("no timeIDs set: too few columns")
-		
+
 	if (any(duplicated(as.data.frame(object)))) stop("duplicated records within data")
 
   time <- tid[,1]
@@ -49,7 +49,7 @@ trip <- function(obj, TORnames) {
 		## only spdf for now
 	if ( !is(obj, "SpatialPointsDataFrame") ) {
 		stop("trip only supports SpatialPointsDataFrame")	#ANY?
-	}	
+	}
 	if (is.factor(obj[[TORnames[2]]])) obj[[TORnames[2]]] <- factor(obj[[TORnames[2]]])
 	new("trip", obj, TimeOrderedRecords(TORnames))
 
@@ -58,29 +58,29 @@ trip <- function(obj, TORnames) {
 ## removed as this was causing recursion in 2.8.0
 #setMethod("trip", signature(obj = "SpatialPointsDataFrame", TORnames = "ANY"), trip)
 
-setMethod("trip", signature(obj = "ANY", TORnames = "TimeOrderedRecords"), 
+setMethod("trip", signature(obj = "ANY", TORnames = "TimeOrderedRecords"),
 	function(obj, TORnames) {
 		new("trip", obj, TORnames)
 
 	})
-	
-	setMethod("trip", signature(obj = "trip", TORnames = "TimeOrderedRecords"), 
+
+	setMethod("trip", signature(obj = "trip", TORnames = "TimeOrderedRecords"),
 		function(obj, TORnames) {
 			new("trip", as(obj, "SpatialPointsDataFrame"), TORnames)
-	
+
 	})
-	
-setMethod("trip", signature(obj = "trip", TORnames = "ANY"), 
+
+setMethod("trip", signature(obj = "trip", TORnames = "ANY"),
 	function(obj, TORnames) {
 	##trip.default(as(obj, "SpatialPointsDataFrame"), TORnames)
 	trip(as(obj, "SpatialPointsDataFrame"), TORnames)
 })
 
-#setMethod("trip", signature(obj = "ANY", col.nms = "TimeOrderedRecords"), 
+#setMethod("trip", signature(obj = "ANY", col.nms = "TimeOrderedRecords"),
 #	function(obj, col.nms) {
 #	 trip(obj, col.nms)
 #	 })
-	 
+
 #setMethod("trip", signature(obj = "SpatialPointsDataFrame", col.nms = "character"),
 	#function(obj, col.nms) new("trip", obj, TimeOrderedRecords(col.nms))
 #)
@@ -113,44 +113,44 @@ as.data.frame.trip <- function(x, ...) as.data.frame(as(x, "SpatialPointsDataFra
 ##  not needed -  by global "Spatial" method
 #setMethod("[[", c("trip", "ANY", "missing"), function(x, i, j, ...)
 #		x@data[[i]]
-#	)	
+#	)
 
 
-	
-setReplaceMethod("[[", c("trip", "ANY", "missing", "ANY"), 
+
+setReplaceMethod("[[", c("trip", "ANY", "missing", "ANY"),
 	function(x, i, j, value) {
-	
+
 		tor <- getTORnames(x)
 		x <- as(x, "SpatialPointsDataFrame")
-		x[[i]] <- value	
+		x[[i]] <- value
 		trip(x, tor)
-	
+
 	}
 )
 
 	##  not needed -  by global "Spatial" method
-	#setMethod("$", c("trip", "character"), 
+	#setMethod("$", c("trip", "character"),
 	#	function(x, name) x@data[[name]]
 	#)
-	
+
 	## needed to ensure validity of returned object
-	setReplaceMethod("$", c("trip", "character", "ANY"), 
-		function(x, name, value) { 
-			tor <- getTORnames(x)
-			x <- as(x, "SpatialPointsDataFrame")
-			
-			x[[name]] <- value
-				
-			trip(x, tor)
-		}
-	)
-	
-	
+	#setReplaceMethod("$", c("trip", "character", "ANY"),
+	#	function(x, name, value) {
+	#		tor <- getTORnames(x)
+	#		x <- as(x, "SpatialPointsDataFrame")
+	#
+	#		x[[name]] <- value
+	#
+	#		trip(x, tor)
+	#	}
+	#)
+
+
 #"[[<-.trip" =  function(x, i, j, value) {
 #
 #	tor <- getTORnames(x)
 #	x <- as(x, "SpatialPointsDataFrame")
-#	x[[i]] <- value	
+#	x[[i]] <- value
 #	trip(x, tor)
 #}
 
@@ -161,11 +161,11 @@ setReplaceMethod("[[", c("trip", "ANY", "missing", "ANY"),
 #	x <- as(x, "SpatialPointsDataFrame")
 
 #	x[[i]] <- value
-	
+
 #	trip(x, tor)
-	
+
 #	}
-	
+
 ##setMethod("names", "trip", function(x) names(as(x, "SpatialPointsDataFrame")))
 ##setMethod("names", "trip", function(x) names(x@data))
 names.trip <- function(x) names(as(x, "SpatialPointsDataFrame"))
@@ -186,7 +186,7 @@ subset.trip <- function(x,  ...) {
 			if ( is.factor(spdf[[tor[2]]])) spdf[[tor[2]]] <- factor(spdf[[tor[2]]])
 			if (any(is.na(match(tor, names(spdf))))) {
 				cat("trip-defining Date or ID columns dropped, reverting to SpatialPointsDataFrame\n\n")
-			
+
 					return(spdf)
 					} else if (any(tapply(spdf[[tor[1]]], spdf[[tor[2]]], length) < 3)){
 						cat("subset loses too many locations, reverting to SpatialPointsDataFrame\n\n")
@@ -203,7 +203,7 @@ setMethod("[", "trip",
 		if ( is.factor(spdf[[tor[2]]])) spdf[[tor[2]]] <- factor(spdf[[tor[2]]])
 		if (any(is.na(match(tor, names(spdf))))) {
 			cat("trip-defining Date or ID columns dropped, reverting to SpatialPointsDataFrame\n\n")
-			
+
 			return(spdf)
 			} else if (any(tapply(spdf[[tor[1]]], spdf[[tor[2]]], length) < 3)){
 				cat("subset loses too many locations, reverting to SpatialPointsDataFrame\n\n")
@@ -220,7 +220,7 @@ setMethod("subset", "trip", subset.trip)
 summary.tordata <- function(object, ...) {
 
 
-  
+
   obj <- list(spdf = summary(as(object, "SpatialPointsDataFrame")))
 
    ## method or not here?
@@ -290,8 +290,8 @@ print.trip <- function(x, ...) {
   #sdf$hideme <- factor(sdf$hideme)
   #names(sdf)[3] <- ""
   row.names(sdf) <- 1:nrow(sdf)
-  
-  
+
+
   print(sdf)
   cat("\n")
 
@@ -315,9 +315,9 @@ setMethod("show", "trip", function(object) print.trip(object))
 #setMethod("spTransform", signature(x = "trip", "CRS"),
 #	function (x, CRSobj, ...)
 #	{
-	    	
+
 #	        xSP <- spTransform(as(x, "SpatialPointsDataFrame"), CRSobj, ...)
-	      
+
 #	        xDF <- x@data
 #	        res <- SpatialPointsDataFrame(coords = coordinates(xSP),
 #	            data = xDF, coords.nrs = numeric(0), proj4string = CRS(proj4string(xSP)))
@@ -326,22 +326,22 @@ setMethod("show", "trip", function(object) print.trip(object))
 #	    }
 #)
 
-setMethod("lines", signature(x = "trip"), 
+setMethod("lines", signature(x = "trip"),
 	function(x, ...) {
 		tor <- getTORnames(x)
 		lx <- split(1:nrow(x), x[[tor[2]]])
 		coords <- coordinates(x)
-		
+
 			col <- hsv(seq(0, 0.5, length = length(lx)))
 			for (i in 1:length(lx)) {
 			        lines(coords[lx[[i]], ], col = col[i], ...)
-			}	
+			}
 	}
 	)
 setMethod("plot", signature(x = "trip", y = "missing"),
 	function(x, y, ...) {
 		plot(as(x, "SpatialPoints"), ...)
-		
+
 	})
 
 
@@ -350,14 +350,14 @@ setMethod("plot", signature(x = "trip", y = "missing"),
 #		plot(coordinates(x),  col = x[[y]], ...)
 #})
 
-recenter.trip <- 
+recenter.trip <-
 function(obj) {
     proj <- is.projected(obj)
     if (is.na(proj)) {
         warning("unknown coordinate reference system: assuming longlat")
     	#projargs <- CRS("+proj=longlat")
     }
-    if (!is.na(proj) & proj) 
+    if (!is.na(proj) & proj)
         stop("cannot recenter projected coordinate reference system")
    projargs <- CRS(proj4string(obj))
    crds <- coordinates(obj)
@@ -367,12 +367,12 @@ function(obj) {
         if (!is.na(proj)) projargs <- CRS(paste(proj4string(obj), "+over"))
     }else {
         if (any(inout)) {
-            crds[, 1] <- ifelse(inout, crds[, 1] + 360, crds[, 
+            crds[, 1] <- ifelse(inout, crds[, 1] + 360, crds[,
                 1])
         if (!is.na(proj)) projargs <- CRS(paste(proj4string(obj), "+over"))
         }
     }
-res <- trip(new("SpatialPointsDataFrame", SpatialPoints(crds, projargs), data = obj@data, 
+res <- trip(new("SpatialPointsDataFrame", SpatialPoints(crds, projargs), data = obj@data,
         coords.nrs = obj@coords.nrs), obj@TOR.columns)
 res}
 
