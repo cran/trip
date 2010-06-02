@@ -7,14 +7,14 @@
      that is unrealistic. 
 }
 \usage{
-speedfilter(x, max.speed = NULL, test = FALSE, ...)
+speedfilter(x, max.speed = NULL, test = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{trip object}
   \item{max.speed}{speed in kilometres per hour}
   \item{test}{cut the algorithm short and just return first pass}
-  \item{\dots}{}
+  
 }
 \details{
      Using an algorithm (McConnnell et al, 1992), points are tested for
@@ -58,8 +58,6 @@ speedfilter(x, max.speed = NULL, test = FALSE, ...)
 } 
 
 \seealso{ \code{\link{trip}}}
-\examples{
 
-}
 \keyword{manip}% at least one, from doc/KEYWORDS
 

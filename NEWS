@@ -1,0 +1,54 @@
+	CHANGES IN trip VERSION 1.1-6
+
+ACKNOWLEDGEMENTS
+
+
+	 o Thanks to Adrian Baddeley for updates to pixellate.psp in
+	 spatstat 1.18-3 and 1.18-4.
+
+	 o Thanks to Edzer Pebesma for updates to the CVS development
+	 version of sp, methods for split and SpatialPixelsDataFrame.
+
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+
+
+	o New function trip.split.exact to cut trip events at specific
+	time-based boundaries.
+
+	o Added method argument, including density and pixellate to
+	 tripGrid, using density.psp and pixellate.psp.
+
+
+	 o trip.R: updated tripGrid, replaced old interpolation
+	approximation with spatstat exact line/cross/cell logic
+	(pixellate.psp). Zero length line segments are supported by
+	trip, and their contribution is recorded by point in cell
+	measurement.  tripGrid.interp still exists for the old
+	approach, and kde method.
+
+	o added verbose argument to readArgos to suppress reporting of
+	duplicate time modifications.
+
+	o added summary of trip duration total to print.summary.tordata. 
+
+BUG FIXES
+	o improvements to makeGridTopology which would sometimes give a silly result
+
+	o removed boilerplate tags in many Rd files
+
+	o removed unused \dots argument in speedfilter
+
+	o trip.R: validtordata required the ID component of a trip to
+	be numeric or factor. This now allows character.
+	
+	o trip.R: updated setMethod("[", "trip" to use same argument
+	handling as SpatialPointsDataFrame
+
+	o Fixed harmless warning error in readArgos for longitudes > 180.
+
+
+	CHANGES IN trip VERSION 1.1-4
+
+	o trip.R: removed setReplaceMethod required by r50609 in R-devel.

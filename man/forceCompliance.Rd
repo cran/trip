@@ -15,13 +15,11 @@ forceCompliance(x, tor)
   \item{x}{ data.frame or SpatialPointsDataFrame}
   \item{tor}{ character vector of names of date-times and trip ID columns }
 }
-\details{
-  
-}
+
 \value{
 	Dataframe or SpatialPointsDataFrame.
 }
-\references{ }
+
 \author{Michael D. Sumner}
 \note{
 

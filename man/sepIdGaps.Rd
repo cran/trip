@@ -23,7 +23,7 @@ sepIdGaps(id, gapdata, minGap = 3600 * 24 * 7)
  A new set of ID levels, named following the pattern that "ID"  split into 3 
  would provided "ID", "ID\_2" and "ID\_3". 
 }
-\references{  }
+
 \author{Michael D. Sumner }
 
 

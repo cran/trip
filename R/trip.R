@@ -19,9 +19,12 @@ validtordata <- function(object) {
   TORlevs <- levels(factor(id))
 
   if (!is(time, "POSIXt")) stop("trip only handles dates and times as POSIXt objects")
+  ## mdsumner ID could not be character, because of finite test 2010-04-28
+  bad1 <- c(is.na(time), !is.finite(time))
+  if (any(bad1)) return("time data contains missing or non finite values")
+  if (any(is.na(id))) return("id data contains missing values")
+  if (is.numeric(id) & any(!is.finite(id))) return("id data contains non-finite values")
 
-  bad <- c(is.na(time), !is.finite(time), is.na(id), !is.finite(id))
-  if (any(bad)) return("time and/or id data contains missing or non finite values")
   d <- unlist(tapply(time, id, diff))
   if (any(d < 0)) return("date-times not in order within id")
   if (any(d == 0)) return("date-times contain duplicates within id")
@@ -91,8 +94,7 @@ setMethod("trip", signature(obj = "trip", TORnames = "ANY"),
 ## print
 ## show
 ## plot
-## summary
-## "[" - not replace
+## summary## "[" - not replace
 
 ## doesn't work already
 ## dim
@@ -195,9 +197,28 @@ subset.trip <- function(x,  ...) {
 						return(trip(spdf, tor))
 					}
 		}
-
 setMethod("[", "trip",
 	function(x, i, j, ... , drop = TRUE) {
+missing.i = missing(i)
+	missing.j = missing(j)
+	nargs = nargs() # e.g., a[3,] gives 2 for nargs, a[3] gives 1.
+	if (missing.i && missing.j) {
+		i = TRUE
+		j = TRUE
+	} else if (missing.j && !missing.i) {
+		if (nargs == 2) {
+			j = i
+			i = TRUE
+		} else {
+			j = TRUE
+		}
+	} else if (missing.i && !missing.j)
+		i = TRUE
+	if (is.matrix(i))
+		stop("matrix argument not supported in SpatialPointsDataFrame selection")
+	if (any(is.na(i)))
+		stop("NAs not permitted in row index")
+
 		spdf <- as(x, "SpatialPointsDataFrame")[i, j, ..., drop = drop]
 		tor <- getTORnames(x)
 		if ( is.factor(spdf[[tor[2]]])) spdf[[tor[2]]] <- factor(spdf[[tor[2]]])
@@ -237,6 +258,7 @@ summary.tordata <- function(object, ...) {
   obj[["nRecords"]] <- nlocs
   obj[["TORnames"]] <- getTORnames(object)
   obj[["tripDuration"]] <- tapply(time, ids, function(x) {x <- format(diff(range(x)))})
+  obj[["tripDurationSeconds"]] <- tapply(time, ids, function(x) {x <- diff(range(unclass(x)))})
 
   class(obj) <- "summary.tordata"
   #invisible(obj)
@@ -259,6 +281,9 @@ print.summary.tordata <- function(x, ...) {
   #dsumm <- as.data.frame(lapply(dsumm, as.character))
   cat(paste("\nObject of class ", x[["class"]], "\n", sep = ""))
   print(format(dsumm, ...))
+  tripDurationSeconds <- sum(x$tripDurationSeconds)
+  tripDurationHours <- sum(x$tripDurationSeconds)/3600
+  cat(paste("\nTotal trip duration: ", tripDurationSeconds, " seconds (", as.integer(tripDurationHours), " hours, ", round((tripDurationHours - as.integer(tripDurationHours)) * 3600), " seconds)\n", sep = ""))
   cat(paste("\nDerived from Spatial data:\n\n", sep = ""))
   print(x$spdf)
   cat("\n")

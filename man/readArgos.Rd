@@ -10,7 +10,8 @@
 
 }
 \usage{
-readArgos(x, correct.all = TRUE, dtFormat = "\%Y-\%m-\%d \%H:\%M:\%S", tz = "GMT", duplicateTimes.eps = 0.01, p4 = "+proj=longlat +datum=WGS84")
+readArgos(x, correct.all = TRUE, dtFormat = "\%Y-\%m-\%d \%H:\%M:\%S",
+tz = "GMT", duplicateTimes.eps = 0.01, p4 = "+proj=longlat +ellps=WGS84", verbose = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +20,9 @@ readArgos(x, correct.all = TRUE, dtFormat = "\%Y-\%m-\%d \%H:\%M:\%S", tz = "GMT
   \item{dtFormat}{the DateTime format used by the Argos data "date" and "time" pasted together }
   \item{tz}{timezone - GMT/UTC is assumed}
   \item{duplicateTimes.eps}{what is the tolerance for times being duplicate? }
-  \item{p4}{PROJ.4 projection string, "+proj=longlat" is assumed}
+  \item{p4}{PROJ.4 projection string, "+proj=longlat +ellps=WGS84" is
+    assumed}
+  \item{verbose}{if TRUE, details on date-time adjustment is reported}
 }
 \details{
   Basic validation checks for class \code{trip} are made, and enforced based on 
@@ -44,8 +47,8 @@ readArgos(x, correct.all = TRUE, dtFormat = "\%Y-\%m-\%d \%H:\%M:\%S", tz = "GMT
   A \code{trip} object, if all goes well, or simply a \code{SpatialPointsDataFrame}.
 }
 \references{The Argos data documentation is at
-  \url{http://www.cls.fr/welcome_en.html}.  Specific details on the PRV ("provide data")
-  format can be found here \url{http://www.cls.fr/manuel/html/chap4/chap4_4_8.htm}.
+  \url{http://www.argos-system.org/manual/}.  Specific details on the PRV ("provide data")
+  format were found here \url{http://www.cls.fr/manuel/html/chap4/chap4_4_8.htm}.
 }
 \author{Michael D. Sumner }
 
@@ -62,8 +65,6 @@ gap.
 \code{\link{order}}, \code{\link{duplicated}}, ,  \code{\link{ordered}} 
  for general \R manipulation of this type. 
 }
-\examples{
 
-}
 \keyword{IO}% at least one, from doc/KEYWORDS
 \keyword{manip}

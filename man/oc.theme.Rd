@@ -20,11 +20,9 @@ oc.colors(n)
 \value{
   A set of colours or a theme object. 
 }
-\references{}
-\author{Michael D. Sumner}
-\note{
 
-}
+\author{Michael D. Sumner}
+
 \seealso{ Similar functions in sp \code{\link[sp]{sp.theme}}, \code{\link[sp]{bpy.colors}}  }
 \examples{
 oc.colors(10)

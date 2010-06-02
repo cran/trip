@@ -12,9 +12,7 @@ readDiag(x)
 \arguments{
   \item{x}{one or more names of DIAG files }
 }
-\details{
-  ~~ If necessary, more details than the description above ~~
-}
+
 \value{
 A data frame with 8 columns. 
   \item{lon1, lat1 }{first pair of coordinates}

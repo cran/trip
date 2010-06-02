@@ -14,6 +14,7 @@
 \alias{print.trip}
 \alias{recenter.trip}
 \alias{oc.col}
+\alias{single.trip.split}
 %\alias{spTransform,trip-method}
 \title{Internal trip Functions}
 \description{

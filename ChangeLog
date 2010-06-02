@@ -1,3 +1,0 @@
-2009-12-06 mdsumner
-
-	* trip.R: removed setReplaceMethod required by r50609 in R-devel

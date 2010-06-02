@@ -21,9 +21,7 @@
  Packages rgdal and sp for full documentation. 
 }
 
-\examples{
 
-}
 
 \keyword{methods}
 \keyword{spatial}

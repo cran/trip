@@ -16,15 +16,13 @@ trip(obj, TORnames)
   \item{TORnames}{Either an object of \code{TimeOrderedRecords}, or a 2-element
   character vector specifying the DateTime and ID column of \code{obj}}
 }
-\details{
-  
-}
+
 \value{
  A trip object, with the usual slots of a \code{SpatialPointsDataFrame} and the
  added \code{TimeOrderedRecords}. For the most part this can be treated as a
  \code{data.frame} with \code{Spatial} coordinates. 
 }
-\references{  }
+
 \author{Michael D. Sumner}
 
 \seealso{ \code{\link{speedfilter}}, and  \code{\link{tripGrid}} for simple(istic)
