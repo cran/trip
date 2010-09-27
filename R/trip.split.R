@@ -120,7 +120,7 @@ trip.split.exact <- function(x, dates) {
     }
 tripRbind <- function (obj, x)
 {
-        require(maptools)
+    suppressMessages(require(maptools))
     tor1 <- getTORnames(obj)
     tor2 <- getTORnames(x)
     if (!all.equal(tor1, tor2)) stop("trips are not equivalent for rbind")

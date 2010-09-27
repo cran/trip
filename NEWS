@@ -1,3 +1,49 @@
+	CHANGES IN trip VERSION 1.1-8
+
+ACKNOWLEDGEMENTS
+
+	 o Thanks to Sebastian Luque for pointing out a problem with
+	 zero-length lines.
+
+	 o Thanks to Francois Rousseu for bug report in readDiag. 
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+ 	o new function filter.penSS to provide non-destructive filter
+	for track data.
+
+	o colours for plotting lines(trip) has been updated, with
+	smarter defaults and leveraging new capacity in sp for passing
+	in lwd/lty/col etc.
+
+	o trackDistance has been completely replaced as a wrapper to
+	an R-level gcdist. This can provide a roughly 3x speed-up for
+	running trackDistance and speedfilter.
+
+	o Removed "push" argument from trackDistance.
+
+	o New as.ppp and as.psp methods to convert from trip to
+	spatstat's point and line classes. 
+
+	o New as(trip, "SpatialLinesDataFrame") method to convert to
+	sp lines.
+
+        o spTransform method for trip objects. 
+
+	o trip now Suggests rgdal for spTransform use. 
+
+	o new as.ltraj.trip methods for ltraj class in adehabitat
+
+	o trip now Suggests adehabitat for coercion to ltraj
+
+ BUG FIXES
+
+	o readDiag would fail when no invalid records were present. 
+
+	o Zero-length lines would propagate NaNs to the entire
+	tripGrid for method "density" (fixed by spatstat > 1.19-1).
+
+
 	CHANGES IN trip VERSION 1.1-6
 
 ACKNOWLEDGEMENTS
@@ -31,7 +77,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
 	o added verbose argument to readArgos to suppress reporting of
 	duplicate time modifications.
 
-	o added summary of trip duration total to print.summary.tordata. 
+	o added summary of trip duration total to print.summary.tordata.
 
 BUG FIXES
 	o improvements to makeGridTopology which would sometimes give a silly result
@@ -42,7 +88,7 @@ BUG FIXES
 
 	o trip.R: validtordata required the ID component of a trip to
 	be numeric or factor. This now allows character.
-	
+
 	o trip.R: updated setMethod("[", "trip" to use same argument
 	handling as SpatialPointsDataFrame
 

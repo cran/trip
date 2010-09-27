@@ -21,10 +21,13 @@ tripGrid(x, grid = NULL, method = "pixellate", ...)
     \details{
       
  Zero-length lines cannot be summed directly, their time value is summed
- by assuming the line is a point. A warning is given.
+ by assuming the line is a point. A warning is given. The density method
+ returns proportionate values, not summed time durations.
+ 
  See \code{pixellate.psp} and \code{pixellate.ppp} for the details on
  the method used. See \code{density.psp} for method = "density".
 
+ 
  Trip events are assumed to start and end as per the object passed
       in. To work with inferred "cutoff" positions see
       \code{split.trip.exact}.
