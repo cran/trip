@@ -1,3 +1,21 @@
+        CHANGES IN trip VERSION 1.1-10
+
+SIGNIFICANT USER-VISIBLE CHANGES
+	        
+        o Suppressed warnings from owin for duplicate points used in pixellate/tripGrid. 
+	
+	o spatstat is now required, not just suggested. 
+
+BUG FIXES
+
+	o superimpose used rather than deprecated superimposePSP
+	
+        o consistency for S3 generic / method arguments in as.ppp.trip
+        and as.psp.trip
+
+        o fixed incomplete "[" method documentation for trip 
+        
+
 	CHANGES IN trip VERSION 1.1-9
 
 SIGNIFICANT USER-VISIBLE CHANGES

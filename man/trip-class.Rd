@@ -1,7 +1,8 @@
 \name{trip-class}
 \docType{class}
 \alias{trip-class}
-\alias{[,trip-method}
+%\alias{[,trip-method}
+\alias{[,trip,ANY,ANY,ANY-method}
 \alias{lines,trip-method}
 \alias{names.trip}
 \alias{names<-.trip}
@@ -19,6 +20,7 @@
 \alias{trip,trip,ANY-method}
 \alias{trip,SpatialPointsDataFrame,ANY-method}
 \alias{trip,ANY,ANY}
+%\alias{trip,ANY,ANY,ANY}
 \alias{trip,trip-method}
 %\alias{$.trip,$<-.trip,[[.trip,[[<-.trip}
 \alias{as.data.frame.trip}

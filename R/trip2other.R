@@ -80,17 +80,19 @@ setAs("ltraj", "trip", function(from) ltraj2trip(from))
 ##  points, sigma, density - as.ppp.trip
 
 ## do we want IDs or times? (let the user do it?)
-as.ppp.trip <- function(X) {
+as.ppp.trip <- function(X, ..., fatal) {
     require(spatstat)
     require(maptools)
     as.ppp.SpatialPointsDataFrame(X)
 }
 setAs("trip", "ppp", function(from) as.ppp.trip(from))
 
-as.psp.trip <- function(X) {
+## spatstat 1.22
+as.psp.trip <- function(x, ..., from, to) {
+##as.psp.trip <- function(X) {
     require(spatstat)
-    split.X <- split(X, X[[getTORnames(X)[2]]])
-    ow <- owin(bbox(X)[1,], bbox(X)[2,])
+    split.X <- split(x, x[[getTORnames(x)[2]]])
+    ow <- owin(bbox(x)[1,], bbox(x)[2,])
 
     as.psp.trip1 <- function(this, ow = NULL) {
         if (is.null(ow)) ow <- owin(bbox(this)[1,], bbox(this)[2,])
@@ -103,7 +105,8 @@ as.psp.trip <- function(X) {
        psp(xs[-length(xs)], ys[-length(ys)], xs[-1], ys[-1], window = ow, marks = dt)
     }
     ## there is no split.psp
-    do.call("superimposePSP", lapply(split.X, as.psp.trip1, ow = ow))
+    ## spatstat 1.22    do.call("superimposePSP", lapply(split.X, as.psp.trip1, ow = ow))
+    do.call("superimpose", lapply(split.X, as.psp.trip1, ow = ow))
 }
 
 setAs("trip", "psp", function(from) as.psp.trip(from))

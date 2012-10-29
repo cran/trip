@@ -50,7 +50,7 @@ validtordata <- function(object) {
   short <- which(unlist(tapply(time, id, length)) < 3)
      ## maybe trip enforces this
   if (length(short)>0) {
-    mess <- "\n  less than 3 locations for ids:\n"
+    mess <- "\n  fewer than 3 locations for ids:\n"
     mess <- paste(mess, paste(TORlevs[short],  collapse = ","), sep = "")
     return(mess)
   }
