@@ -25,8 +25,8 @@ ltraj2trip(ltr)
  % \item{date}{see \code{\link[adehabitat]{as.ltraj}}}
  % \item{id}{see \code{\link[adehabitat]{as.ltraj}}}
  % \item{burst}{see \code{\link[adehabitat]{as.ltraj}}}
-  \item{typeII}{see \code{\link[adehabitat]{as.ltraj}}}
-  \item{slsp}{details for the \code{\link[adehabitat]{ltraj}} turning angles}
+  \item{typeII}{see \code{\link[adehabitatLT]{as.ltraj}}}
+  \item{slsp}{details for the \code{\link[adehabitatLT]{ltraj}} turning angles}
   \item{ltr}{ltraj object}
 }
 
@@ -37,7 +37,7 @@ d <- data.frame(x = 1:10, y = rnorm(10), tms = Sys.time() + 1:10, id = gl(2, 5))
 coordinates(d) <- ~x+y
 
 tr <- trip(d, c("tms", "id"))
-require(adehabitat)
+require(adehabitatLT)
 l <- as.ltraj.trip(tr)
 
 ltraj2trip(l)

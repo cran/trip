@@ -4,8 +4,8 @@ speedfilter <- function (x, max.speed = NULL, test = FALSE)
     if (!is(x, "trip"))
         stop("only trip objects supported")
     projected <- is.projected(x)
-    dist <- function(x1, y1, x2, y2) sqrt((x2 - x1)^2 + (y2 -
-                                                         y1)^2)
+#### NOT USED MDS 2011-09-25    dist <- function(x1, y1, x2, y2) sqrt((x2 - x1)^2 + (y2 -
+                            ##                             y1)^2)
     if (is.na(projected)) {
         projected <- FALSE
         warning("coordinate system is NA, assuming longlat . . .")

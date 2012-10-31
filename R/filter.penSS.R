@@ -1,23 +1,9 @@
-filter.penSS <-
-    function(tr,lambda,first=TRUE,last=TRUE,...) {
 
-        if (length(summary(tr)$tripID) > 1) {
-            warning("trip object contains multiple events, only the first trip used")
-            tr <- tr[tr[[getTORnames(tr)[2]]] == summary(tr)$tripID[1], ]
-        }
-        ## Number of points and subset
-        n <- nrow(tr)
-        sub <- (1+first):(n-last)
 
-        ## Observed points
-        ##  p.obs <- as.matrix(tr[,c("Lat","Lon")])
-        p.obs <- coordinates(tr)[,2:1]
 
-        ## Time intervals (in days) between obs
+filter.penSS <- function(tr,lambda,first=TRUE,last=TRUE,...) {
 
-        ##dt <- diff(unclass(tr$Time)/(24*60*60))
-        dt <- diff(unclass(tr[[getTORnames(tr)[1]]])/(24*60*60))
-        penalized <- function(x) {
+    penalized <- function(x) {
 
             ## Form smoothed track
             p <- p.obs
@@ -37,8 +23,24 @@ filter.penSS <-
             ## This is the penalized sum of squares
             (sum(d^2) + lambda*sum(v^2))/n^2
         }
+        if (length(summary(tr)$tripID) > 1) {
+            warning("trip object contains multiple events, only the first trip used")
+            tr <- tr[tr[[getTORnames(tr)[2]]] == summary(tr)$tripID[1], ]
+        }
+        ## Number of points and subset
+        n <- nrow(tr)
+        sub <- (1+first):(n-last)
 
-        mn <- nlm(penalized,as.matrix(p.obs[sub,]),...)
+        ## Observed points
+        ##  p.obs <- as.matrix(tr[,c("Lat","Lon")])
+        p.obs <- coordinates(tr)[,2:1]
+
+        ## Time intervals (in days) between obs
+
+        ##dt <- diff(unclass(tr$Time)/(24*60*60))
+        dt <- diff(unclass(tr[[getTORnames(tr)[1]]])/(24*60*60))
+
+        mn <- nlm(penalized, as.matrix(p.obs[sub,]), ...)
         m <- n-(first+last)
         res <- coordinates(tr)
 

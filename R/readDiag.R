@@ -1,5 +1,4 @@
-"readDiag" <- function (x)
-{
+readDiag <- function (x) {
     data <- NULL
     for (fl in x) {
         d <- readLines(fl)

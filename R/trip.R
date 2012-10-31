@@ -121,11 +121,13 @@ setMethod("trip", signature(obj = "ANY", TORnames = "TimeOrderedRecords"),
 
 	})
 
-	setMethod("trip", signature(obj = "trip", TORnames = "TimeOrderedRecords"),
+
+setMethod("trip", signature(obj = "trip", TORnames = "TimeOrderedRecords"),
 		function(obj, TORnames) {
 			new("trip", as(obj, "SpatialPointsDataFrame"), TORnames)
 
-	})
+
+                    })
 
 setMethod("trip", signature(obj = "trip", TORnames = "ANY"),
 	function(obj, TORnames) {
@@ -224,7 +226,9 @@ setReplaceMethod("[[", c("trip", "ANY", "missing", "ANY"),
 
 ##setMethod("names", "trip", function(x) names(as(x, "SpatialPointsDataFrame")))
 ##setMethod("names", "trip", function(x) names(x@data))
+
 names.trip <- function(x) names(as(x, "SpatialPointsDataFrame"))
+
 "names<-.trip" <- function(x, value) { names(x@data) = value;  x@TOR.columns = value; x }
 
 
@@ -234,7 +238,7 @@ setMethod("text", "trip", function(x, ...) text(as(x, "SpatialPointsDataFrame"),
 #setMethod("split", "SpatialPointsDataFrame", split.data.frame)
 
 
-#subset.trip <- function(x, subset, select, drop = FALSE, ...) {
+
 subset.trip <- function(x,  ...) {
 			#spdf <- subset(as(x, "SpatialPointsDataFrame"), subset, select, drop = drop, ...)
 			spdf <- subset(as(x, "SpatialPointsDataFrame"), ...)
@@ -253,13 +257,15 @@ subset.trip <- function(x,  ...) {
 		}
 setMethod("[", "trip",
 	function(x, i, j, ... , drop = TRUE) {
-missing.i = missing(i)
-	missing.j = missing(j)
-	nargs = nargs() # e.g., a[3,] gives 2 for nargs, a[3] gives 1.
-	if (missing.i && missing.j) {
-		i = TRUE
-		j = TRUE
-	} else if (missing.j && !missing.i) {
+
+            missing.i = missing(i)
+            missing.j = missing(j)
+            nargs = nargs() # e.g., a[3,] gives 2 for nargs, a[3] gives 1.
+
+            if (missing.i && missing.j) {
+                i = TRUE
+                j = TRUE
+            } else if (missing.j && !missing.i) {
 		if (nargs == 2) {
 			j = i
 			i = TRUE
@@ -377,12 +383,6 @@ print.trip <- function(x, ...) {
 }
 
 
-
-
-
-
-
-
 setMethod("summary", "trip", summary.tordata)
 
 setMethod("show", "trip", function(object) print.trip(object))
@@ -424,8 +424,7 @@ setMethod("plot", signature(x = "trip", y = "missing"),
 #		plot(coordinates(x),  col = x[[y]], ...)
 #})
 
-recenter.trip <-
-function(obj) {
+recenter.trip <- function(obj) {
     proj <- is.projected(obj)
     if (is.na(proj)) {
         warning("unknown coordinate reference system: assuming longlat")
@@ -446,8 +445,10 @@ function(obj) {
         if (!is.na(proj)) projargs <- CRS(paste(proj4string(obj), "+over"))
         }
     }
-res <- trip(new("SpatialPointsDataFrame", SpatialPoints(crds, projargs), data = obj@data,
+
+    res <- trip(new("SpatialPointsDataFrame", SpatialPoints(crds, projargs), data = obj@data,
         coords.nrs = obj@coords.nrs), obj@TOR.columns)
-res}
+    res
+}
 
 setMethod("recenter", "trip", recenter.trip)

@@ -31,8 +31,9 @@ trackDistance(x1, y1, x2, y2, longlat = TRUE)
 }
 \details{
 
-  trackDistance calls source code identical to sp's spDistN when longlat is TRUE.
-
+  Distance values are in the units of the input coordinate system when
+  longlat is FALSE, and in kilometres when longlat is TRUE.
+  
   This originally used \code{\link[sp]{spDistsN1}} but now implements
   the sp gcdist source directly in R.
 

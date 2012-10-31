@@ -20,6 +20,22 @@
 ##DONE  implement check that boundary dates encompass the trip range
 
 
+tripRbind <- function (obj, x)
+{
+    ## not needed, and not possible since classes imported using
+    ## NAMESPACE MDS 2012-10-09
+    ## suppressMessages(require(maptools))
+
+
+    tor1 <- getTORnames(obj)
+    tor2 <- getTORnames(x)
+    if (!all.equal(tor1, tor2)) stop("trips are not equivalent for rbind")
+    SP <- spRbind(as(obj, "SpatialPoints"), as(x, "SpatialPoints"))
+    df <- rbind(slot(obj, "data"), slot(x, "data"))
+        dupes <- duplicated(cbind(coordinates(SP), df))
+    x <- SpatialPointsDataFrame(SP, data = df)[!dupes, ]
+    trip(x, tor1)
+}
 
 single.trip.split <- function(tr1, boundary.dates) {
     diff.d <- diff(unclass(boundary.dates))
@@ -100,11 +116,8 @@ trip.split.exact <- function(x, dates) {
     all.names <- unique(unlist(lapply(all.list, names)))
     ord <- order(as.POSIXct(all.names))
     all.names <- all.names[ord]
-
     res.list <- vector("list", length(all.names))
     names(res.list) <- all.names
-
-
     for (i in 1:length(all.names)) {
         this.name <- all.names[i]
         this.res <- list()
@@ -112,35 +125,18 @@ trip.split.exact <- function(x, dates) {
             matches <- match(this.name,  names(all.list[[j]]))
             if (!is.na(matches)) {
                 this.res <- c(this.res, all.list[[j]][[this.name]])
-
             }
         }
-
         res.list[[this.name]] <- this.res
     }
-tripRbind <- function (obj, x)
-{
-    suppressMessages(require(maptools))
-    tor1 <- getTORnames(obj)
-    tor2 <- getTORnames(x)
-    if (!all.equal(tor1, tor2)) stop("trips are not equivalent for rbind")
-    SP <- spRbind(as(obj, "SpatialPoints"), as(x, "SpatialPoints"))
-    df <- rbind(slot(obj, "data"), slot(x, "data"))
-        dupes <- duplicated(cbind(coordinates(SP), df))
-    x <- SpatialPointsDataFrame(SP, data = df)[!dupes, ]
-    trip(x, tor1)
-}
-
-nlist <- vector("list", length(res.list))
-names(nlist) <- names(res.list)
-for (i in 1:length(res.list)) {
-    nlist[[i]] <- res.list[[i]][[1]]
-    if (length(res.list[[i]]) > 1) {
-        for (j in 2:length(res.list[[i]])) nlist[[i]] <- tripRbind(nlist[[i]], res.list[[i]][[j]])
+    nlist <- vector("list", length(res.list))
+    names(nlist) <- names(res.list)
+    for (i in 1:length(res.list)) {
+        nlist[[i]] <- res.list[[i]][[1]]
+        if (length(res.list[[i]]) > 1) {
+            for (j in 2:length(res.list[[i]])) nlist[[i]] <- tripRbind(nlist[[i]], res.list[[i]][[j]])
+        }
     }
-}
-
-
     nlist
 }
 

@@ -1,2 +1,18 @@
+remove dependencies, all imports
+
+can tripTransform be removed without requiring rgdal for installation?
+
+incorporate Pinaud's ideas/requests
+
+Explore rgeos Intersect for tripGrid alternative
+
+namespace
+
+make trip.split.exact a cut() method
+
+
+
+DONE
+
 Investigate uses of "trackDistance" for handling projection option vs. default
 

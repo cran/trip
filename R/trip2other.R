@@ -1,15 +1,19 @@
 # trip definitions so spatstat does not need to be available
-if (!isClass("ppp"))
-	setClass("ppp")
-
-if (!isClass("psp"))
-	setClass("psp")
-
-if (!isClass("owin"))
-	setClass("owin")
-
 if(!isClass("ltraj"))
     setClass("ltraj")
+
+## not needed, now imported by NAMESPACE from maptools
+## help by S. Luque, 2012-10-09
+##if (!isClass("ppp"))
+##	setClass("ppp")
+
+##if (!isClass("psp"))
+##	setClass("psp")
+
+##if (!isClass("owin"))
+##	setClass("owin")
+
+
 
 #if(!isGeneric("as.ltraj"))
 #    setGeneric("as.ltraj")
@@ -26,7 +30,7 @@ if(!isClass("ltraj"))
 
 ltraj2trip <- function (ltr)
 {
-    require(adehabitat)
+    require(adehabitatLT)
     if (!inherits(ltr, "ltraj"))
         stop("ltr should be of class \"ltraj\"")
 
@@ -56,7 +60,7 @@ ltraj2trip <- function (ltr)
 ## ltraj from adehabitat
 
 as.ltraj.trip <- function(xy, typeII = TRUE, slsp = "remove") {
-    require(adehabitat)
+    require(adehabitatLT)
     tor <- getTORnames(xy)
     crds <- coordinates(xy)
     as.ltraj(as.data.frame(crds), date = xy[[tor[1]]], id = xy[[tor[2]]], typeII = typeII, slsp = slsp)
@@ -81,10 +85,18 @@ setAs("ltraj", "trip", function(from) ltraj2trip(from))
 
 ## do we want IDs or times? (let the user do it?)
 as.ppp.trip <- function(X, ..., fatal) {
-    require(spatstat)
-    require(maptools)
+
+    ## still needed? with importFrom(maptools,as.ppp.SpatialPointsDataFrame)?
+    ##    require(spatstat)
+
+    ## not needed, and not possible since classes imported using
+    ## NAMESPACE MDS 2012-10-09
+    ## suppressMessages(require(maptools
+    ## require(maptools)
+
     as.ppp.SpatialPointsDataFrame(X)
 }
+
 setAs("trip", "ppp", function(from) as.ppp.trip(from))
 
 ## spatstat 1.22

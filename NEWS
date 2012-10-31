@@ -1,25 +1,54 @@
+        CHANGES IN trip VERSION 1.1-12
+
+	o reduced time taken by examples by removal with dontrun,
+	thanks to CRAN maintainers
+
+        CHANGES IN trip VERSION 1.1-11
+
+ACKNOWLEDGEMENTS
+
+	o Thanks to Sebastian Luque for advice on NAMESPACE fixes
+
+	o thanks to Andrew Irwin for update on trackDistance documentation
+
+
+OVERVIEW
+
+        o added a NAMESPACE file and package updates to make
+        everything work, maptools is now Imports, rgdal, adehabitatLT
+        and lattice are Suggests
+	
+	o modified dependency on adehabitat to adehabitatLT
+
+	o removed class definitions for ppp, psp and owin, now
+	imported from maptools
+
+        o update to trackDistance documentation
+
+
         CHANGES IN trip VERSION 1.1-10
 
 SIGNIFICANT USER-VISIBLE CHANGES
-	        
-        o Suppressed warnings from owin for duplicate points used in pixellate/tripGrid. 
-	
-	o spatstat is now required, not just suggested. 
+
+        o Suppressed warnings from owin for duplicate points used in
+        pixellate/tripGrid.
+
+	o spatstat is now required, not just suggested.
 
 BUG FIXES
 
 	o superimpose used rather than deprecated superimposePSP
-	
+
         o consistency for S3 generic / method arguments in as.ppp.trip
         and as.psp.trip
 
-        o fixed incomplete "[" method documentation for trip 
-        
+        o fixed incomplete "[" method documentation for trip
+
 
 	CHANGES IN trip VERSION 1.1-9
 
 SIGNIFICANT USER-VISIBLE CHANGES
-	   
+
 	o speed improvement in speedfilter, 6x or more
 
 
@@ -30,7 +59,7 @@ ACKNOWLEDGEMENTS
 	 o Thanks to Sebastian Luque for pointing out a problem with
 	 zero-length lines.
 
-	 o Thanks to Francois Rousseu for bug report in readDiag. 
+	 o Thanks to Francois Rousseu for bug report in readDiag.
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
@@ -48,14 +77,14 @@ SIGNIFICANT USER-VISIBLE CHANGES
 	o Removed "push" argument from trackDistance.
 
 	o New as.ppp and as.psp methods to convert from trip to
-	spatstat's point and line classes. 
+	spatstat's point and line classes.
 
 	o New as(trip, "SpatialLinesDataFrame") method to convert to
 	sp lines.
 
-        o spTransform method for trip objects. 
+        o spTransform method for trip objects.
 
-	o trip now Suggests rgdal for spTransform use. 
+	o trip now Suggests rgdal for spTransform use.
 
 	o new as.ltraj.trip methods for ltraj class in adehabitat
 
@@ -63,7 +92,7 @@ SIGNIFICANT USER-VISIBLE CHANGES
 
  BUG FIXES
 
-	o readDiag would fail when no invalid records were present. 
+	o readDiag would fail when no invalid records were present.
 
 	o Zero-length lines would propagate NaNs to the entire
 	tripGrid for method "density" (fixed by spatstat > 1.19-1).

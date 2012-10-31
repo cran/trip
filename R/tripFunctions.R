@@ -29,22 +29,21 @@ forceCompliance <- function(x, tor) {
     x
 }
 
+intpFun <- function(x) {
+        len <- round(x[3] + 1)
+        new <- seq(x[1], x[2], length = len)
+        if (len > 1)
+            new[-len]
+        else new
+    }
+
 interpequal <- function(x, dur = NULL, quiet = FALSE) {
 
-
-    ##equalTime<- function (coords, time, id = factor(rep(1,
-    ##length(x))), dur = NULL)
-
-    ##	{
 
     if (!is(x, "trip")) stop("only trip objects supported")
     if (is.null(dur)) stop("equal time duration must be specified \"dur = ?\"")
     ## x must be a single trip
 
-    ##intp <- equalTime(coordinates(x), time = x[[x@TOR.columns[1]]],
-
-    ##		id = x[[x@TOR.columns[2]]],
-    ##dur = dur)
 
     tor <- x@TOR.columns
     time <- x[[tor[1]]]
@@ -62,13 +61,7 @@ interpequal <- function(x, dur = NULL, quiet = FALSE) {
     ##   dur <- as.numeric(min(unlist(tapply(as.integer(time),
 
     ##            id, diff))))
-    intpFun <- function(x) {
-        len <- round(x[3] + 1)
-        new <- seq(x[1], x[2], length = len)
-        if (len > 1)
-            new[-len]
-        else new
-    }
+
     for (sub in levs) {
         ind <- id == sub
         xx <- x[ind]
@@ -150,11 +143,11 @@ kdePoints <- function (x, h = NULL, grid =NULL, resetTime = TRUE, ...)
 
     ## must acknowledge MASS for this
     if (missing(h)) {
-        bandwidth.nrd <- function(x) {
-            r <- quantile(x, c(0.25, 0.75))
-            h <- (r[2] - r[1])/1.34
-            4 * 1.06 * min(sqrt(var(x)), h) * length(x)^(-1/5)
-        }
+       ##  bandwidth.nrd <- function(x) {
+       ##     r <- quantile(x, c(0.25, 0.75))
+       ##     h <- (r[2] - r[1])/1.34
+       ##     4 * 1.06 * min(sqrt(var(x)), h) * length(x)^(-1/5)
+       ## }
         h <- c(bandwidth.nrd(xx), bandwidth.nrd(yy))/10
     }
     if (is.null(grid))  grid <- makeGridTopology(coords, ...)
@@ -172,8 +165,7 @@ kdePoints <- function (x, h = NULL, grid =NULL, resetTime = TRUE, ...)
     SpatialGridDataFrame(grid, data.frame(z = as.vector(z)), CRS(proj4string(x)))
 }
 
-countPoints <-
-    function (x, dur = 1, grid = NULL)
+countPoints <- function (x, dur = 1, grid = NULL)
 {
     coords <- coordinates(x)
     xx <- coords[ , 1]
@@ -208,8 +200,7 @@ countPoints <-
 }
 
 
-makeGridTopology <-
-    function (obj, cells.dim =c(100, 100),
+makeGridTopology <- function (obj, cells.dim =c(100, 100),
               xlim =NULL, ylim = NULL, buffer = 0, cellsize = NULL, adjust2longlat = FALSE)
 {
     if ((is.null(xlim) | is.null(ylim)) & missing(obj)) stop("require at least a Spatial object, matrix object, or xlim and ylim")
@@ -365,12 +356,12 @@ argos.sigma <- function(x, sigma = c(100, 80, 50, 20, 10, 4,  2),
     sigma[x]
 }
 
-readArgos <-
-    ## add "correct.all" argument - just return data frame if it fails, with
-    ## suggestions of how to sort/fix it
-    function (x, correct.all = TRUE, dtFormat = "%Y-%m-%d %H:%M:%S",
+readArgos <- function (x, correct.all = TRUE, dtFormat = "%Y-%m-%d %H:%M:%S",
               tz = "GMT", duplicateTimes.eps = 1e-2, p4 = "+proj=longlat +ellps=WGS84", verbose = FALSE)
 {
+    ## add "correct.all" argument - just return data frame if it fails, with
+    ## suggestions of how to sort/fix it
+
     dout <- NULL
     for (con in x) {
         old.opt <- options(warn = -1)

@@ -1,25 +1,5 @@
-
-trackDistance <- function(x1, y1, x2, y2, longlat = TRUE) {
-
-    if (missing(y1)) {
-        if (!is.matrix(x1))
-            stop("x1 is not a matrix and multiple arguments not specified")
-
-        if (nrow(x1) < 2) stop("x1 has too few rows")
-        if (ncol(x1) < 2) stop("x1 has too few columns")
-
-        x2 <- x1[-1, 1]
-        y1 <- x1[-nrow(x1), 2]
-        y2 <- x1[-1,2]
-
-        x1 <- x1[-nrow(x1), 1]
-    }
-    nx <- length(x1)
-    if (nx != length(y1) | nx != length(x2) | nx != length(y2))
-        stop("arguments must have equal lengths")
-
-    ## taken from package sp/src/gcdist.c
-    gcdist <- function(lon1, lat1, lon2, lat2) {
+  ## taken from package sp/src/gcdist.c
+    gcdist.c <- function(lon1, lat1, lon2, lat2) {
                                         #   lon1 <- x[-nrow(x), 1];lat1 <- x[-nrow(x), 2]
                                         #   lon2 <- x[-1, 1];lat2 <- x[-1, 2]
         DE2RA = pi/180;
@@ -59,6 +39,27 @@ trackDistance <- function(x1, y1, x2, y2, longlat = TRUE) {
         dist <- ifelse(abs((abs(lon1) + abs(lon2)) - 360.0) < .Machine$double.eps, 0.0, dist)
         dist
     }
-   if (longlat) gcdist(x1, y1, x2, y2) else sqrt((x2 - x1)^2 + (y2 - y1)^2)
+
+trackDistance <- function(x1, y1, x2, y2, longlat = TRUE) {
+
+    if (missing(y1)) {
+        if (!is.matrix(x1))
+            stop("x1 is not a matrix and multiple arguments not specified")
+
+        if (nrow(x1) < 2) stop("x1 has too few rows")
+        if (ncol(x1) < 2) stop("x1 has too few columns")
+
+        x2 <- x1[-1, 1]
+        y1 <- x1[-nrow(x1), 2]
+        y2 <- x1[-1,2]
+
+        x1 <- x1[-nrow(x1), 1]
+    }
+    nx <- length(x1)
+    if (nx != length(y1) | nx != length(x2) | nx != length(y2))
+        stop("arguments must have equal lengths")
+
+
+   if (longlat) gcdist.c(x1, y1, x2, y2) else sqrt((x2 - x1)^2 + (y2 - y1)^2)
 }
 

@@ -15,6 +15,16 @@
 \alias{recenter.trip}
 \alias{oc.col}
 \alias{single.trip.split}
+
+%% temporarily added to pass CHECK, before real hard NAMESPACE work
+%% 2012-10-09
+\alias{g2ow}
+\alias{gcdist.c}
+\alias{intpFun}
+\alias{penalized}
+\alias{tripRbind}
+
+
 %\alias{spTransform,trip-method}
 \title{Internal trip Functions}
 \description{

@@ -1,6 +1,3 @@
-# Default NAMESPACE created by R
-# Remove the previous line if you edit this file
-
 # Export all names
 exportPattern(".")
 
@@ -10,3 +7,128 @@ import(
   sp,
   spatstat
 )
+
+
+importClassesFrom(maptools,
+                  ppp, psp, owin)
+
+## does this mean require(spatstat) not needed in as.ppp.trip?
+importFrom(maptools, as.ppp.SpatialPointsDataFrame)
+
+## to fix tripRbind: no visible global function definition for 'spRbind'
+importFrom(maptools, spRbind)
+
+
+##export(trip)
+## export(print.trip)
+## export(summary.tordata)
+## export(print.summary.tordata)
+##S3method(print, trip)
+
+##exportClass(trip
+## enables "show" and "print" for tr
+##importMethodsFrom(sp, summary)
+
+## importFrom(sp, SpatialPointsDataFrame)
+
+##importFrom(methods, show)
+##exportClass(trip)
+
+
+## o imports
+## a
+## trip.R
+##
+## "SpatialPointsDataFrame"
+##
+## o exports
+##
+## "trip"
+## trip
+##
+##
+## o not exports
+##
+## "TimeOrderedRecords"
+## validtordata
+## TimeOrderedRecords
+## getTORnames
+## getTimeID
+##
+## o to worry about
+##
+## tripTransform
+##
+## NOT REQUIRED ?
+##
+## as.data.frame.trip
+## dim.trip
+## names.trip
+## names<-.trip
+##
+## subset.trip
+##
+##
+## print.trip
+## summary.tordata
+## print.summary.tordata
+##
+##
+
+
+
+## FUNCTIONS DEFINED
+##
+## F:\build\rforge\pkg\trip\R>grep "<- function" * | grep "#" --invert
+## TimeOrderedRecords.R:TimeOrderedRecords <- function(x) {
+## TimeOrderedRecords.R:getTORnames <- function(obj) obj@TOR.columns
+## TimeOrderedRecords.R:getTimeID <- function(obj) as.data.frame(obj)[, getTORnames(obj)]
+## filter.penSS.R:        penalized <- function(x) {
+## readDiag.R:"readDiag" <- function (x)
+## speedfilter.R:speedfilter <- function (x, max.speed = NULL, test = FALSE)
+## speedfilter.R:    dist <- function(x1, y1, x2, y2) sqrt((x2 - x1)^2 + (y2 -
+## trackDistance.R:trackDistance <- function(x1, y1, x2, y2, longlat = TRUE) {
+## trackDistance.R:    gcdist <- function(lon1, lat1, lon2, lat2) {
+## trip.R:validtordata <- function(object) {
+## trip.R:tripTransform <- function(x, crs, ...) {
+## trip.R:trip <- function(obj, TORnames) {
+## trip.R:dim.trip <- function(x) dim(as(x, "SpatialPointsDataFrame"))
+## trip.R:as.data.frame.trip <- function(x, ...) as.data.frame(as(x, "SpatialPointsDataFrame"), ...)
+## trip.R:names.trip <- function(x) names(as(x, "SpatialPointsDataFrame"))
+## trip.R:"names<-.trip" <- function(x, value) { names(x@data) = value;  x@TOR.columns = value; x }
+## trip.R:subset.trip <- function(x,  ...) {
+## trip.R:summary.tordata <- function(object, ...) {
+## trip.R:print.summary.tordata <- function(x, ...) {
+## trip.R:print.trip <- function(x, ...) {
+## trip.split.R:single.trip.split <- function(tr1, boundary.dates) {
+## trip.split.R:trip.split.exact <- function(x, dates) {
+## trip.split.R:tripRbind <- function (obj, x)
+## trip2other.R:ltraj2trip <- function (ltr)
+## trip2other.R:as.ltraj.trip <- function(xy, typeII = TRUE, slsp = "remove") {
+## trip2other.R:as.ppp.trip <- function(X, ..., fatal) {
+## trip2other.R:as.psp.trip <- function(x, ..., from, to) {
+## trip2other.R:    as.psp.trip1 <- function(this, ow = NULL) {
+## trip2other.R:as.trip.SpatialLinesDataFrame <- function(from) {
+## tripFunctions.R:forceCompliance <- function(x, tor) {
+## tripFunctions.R:interpequal <- function(x, dur = NULL, quiet = FALSE) {
+## tripFunctions.R:    intpFun <- function(x) {
+## tripFunctions.R:tripGrid.interp <- function(x, grid = NULL, method = "count", dur = NULL, ...) {
+## tripFunctions.R:kdePoints <- function (x, h = NULL, grid =NULL, resetTime = TRUE, ...)
+## tripFunctions.R:        bandwidth.nrd <- function(x) {
+## tripFunctions.R:adjust.duplicateTimes <- function (time, id)
+## tripFunctions.R:argos.sigma <- function(x, sigma = c(100, 80, 50, 20, 10, 4,  2),
+## tripFunctions.R:sepIdGaps <- function(id, gapdata, minGap = 3600 * 24 * 7) {
+## tripGrid.R:  g2ow <- function(x) {
+##
+## CLASSES DEFINED
+##
+## F:\build\rforge\pkg\trip\R>grep setClass *
+## TimeOrderedRecords.R:setClass("TimeOrderedRecords", representation(TOR.columns = "character"))
+## trip.R:setClass("trip", contains = c("TimeOrderedRecords", "SpatialPointsDataFrame"))
+## trip2other.R:   setClass("ppp")
+## trip2other.R:   setClass("psp")
+## trip2other.R:   setClass("owin")
+## trip2other.R:    setClass("ltraj")
+## trip2other.R:##     setClass("im")
+## trip2other.R:##     setClass("tess")
+##

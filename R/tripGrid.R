@@ -7,16 +7,7 @@
 
 ## replaces tripGrid, old version is now called tripGrid.interp
 
-tripGrid <-
-function (x, grid = NULL, method = "pixellate", ...)
-{
-    if (method %in% c("kde", "count"))
-        warning("kde and count methods no longer supported from trip_1.1-6 and will be ignored, see ?tripGrid.interp for legacy function")
-    if (!is.null(list(...)$dur))
-        stop("dur(ation) not necessary for this function from trip_1.1-6 and will be ignored - time sum is now exact\n see ?tripGrid.interp 
-for legacy function")
-    require(spatstat)
-  g2ow <- function(x) {
+ g2ow <- function(x) {
         mn <- x@cellcentre.offset - x@cellsize/2
         mx <- mn + x@cells.dim * x@cellsize
         owin(c(mn[1], mx[1]), c(mn[2], mx[2]), mask = matrix(TRUE, x@cells.dim[2], x@cells.dim[1]),
@@ -25,6 +16,16 @@ for legacy function")
 #owin(c(mn[2], mx[2]), c(mn[1], mx[1]), mask = matrix(TRUE, x@cells.dim[2], x@cells.dim[1]),
 #	xy =list(x = seq(mn[1], mx[1], length = x@cells.dim[1]), y = seq(mn[2], mx[2], length = x@cells.dim[2])) )
     }
+
+tripGrid <- function (x, grid = NULL, method = "pixellate", ...)
+{
+    if (method %in% c("kde", "count"))
+        warning("kde and count methods no longer supported from trip_1.1-6 and will be ignored, see ?tripGrid.interp for legacy function")
+    if (!is.null(list(...)$dur))
+        stop("dur(ation) not necessary for this function from trip_1.1-6 and will be ignored - time sum is now exact\n see ?tripGrid.interp 
+for legacy function")
+    require(spatstat)
+
     if (is.null(grid))
         grid <- makeGridTopology(x)
     res <- as.image.SpatialGridDataFrame(SpatialGridDataFrame(grid,
