@@ -1,3 +1,19 @@
+
+        CHANGES IN trip VERSION 1.1-12
+
+	o fix for ltraj2trip
+
+        CHANGES IN trip VERSION 1.1-11
+
+ACKNOWLEDGEMENTS
+
+	o Thanks to Sebastian Luque for ltraj2trip patch
+
+
+
+
+
+
         CHANGES IN trip VERSION 1.1-12
 
 	o reduced time taken by examples by removal with dontrun,
