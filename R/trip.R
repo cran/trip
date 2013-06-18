@@ -1,26 +1,46 @@
-# $Id: trip.R 125 2013-05-05 21:47:13Z mdsumner $
+# $Id$
 
-## removed depends sp, suggests rgdal
-## deprecate this, replace with spTransform method below
+## removed depends sp, suggests rgdal deprecate this, replace with
+## spTransform method below
 tripTransform <- function(x, crs, ...) {
-    ##require(rgdal) || stop("rgdal package is required, but unavailable")
-.Deprecated("spTransform")
+    .Deprecated("spTransform")
     if (! inherits(crs, "CRS")) crs <- CRS(crs)
-    tor <- getTORnames(x)
-    xSP <- as(x, "SpatialPointsDataFrame")
-    xSP <- spTransform(xSP, crs, ...)
-    trip(xSP, tor)
+    spTransform(x, crs, ...)
 }
-
 setMethod("spTransform", signature("trip", "CRS"),
           function(x, CRSobj, ...) {
-
-              pts <- try(spTransform(as(x, "SpatialPointsDataFrame"), CRSobj, ...))
-              if(inherits(pts, "try-error")) stop("spTransform requires rgdal, which must be loaded")
+              if (!("rgdal" %in% loadedNamespaces())) {
+                  ns <- try(loadNamespace("rgdal"))
+                  if (isNamespace(ns)) {
+                      message("[loaded the rgdal namespace]")
+                  } else {
+                      msg <- paste("This method requires the rgdal package",
+                                   "but is unable to load rgdal namespace",
+                                   sep=",")
+                      stop(msg)
+                  }
+              }
+              pts <- spTransform(as(x, "SpatialPointsDataFrame"),
+                                 CRSobj, ...)
               trip(pts, getTORnames(x))
-##              mystuff(coordinates(y), proj = proj4string(y))
-      })
+          })
 
+## method to allow transformation with character only
+setMethod("spTransform", signature("Spatial", "character"), 
+          function(x, CRSobj, ...) {
+            
+            .local <- function (object, pstring, ...) 
+            {
+              crs <- try(CRS(pstring))
+              if (inherits(crs, "try-error")) { stop(sprintf("cannot determine valid CRS from %s", pstring))
+              } else {
+                spTransform(x, crs)
+              }
+            }
+            
+            .local(x, pstring = CRSobj, ...)
+            
+          })
 
 ###_ + Functions
 
@@ -376,8 +396,18 @@ sepIdGaps <- function(id, gapdata, minGap=3600 * 24 * 7) {
 }
 
 
+.distances <- function(x) {
+  proj <- is.projected(x)
+  if (is.na(proj)) proj <- FALSE
+
+  
+  lapply(split(x, x[[getTORnames(x)[2]]]), function(x) trackDistance(coordinates(x), longlat = !proj))
+  
+}
 
 ###_ + Emacs local variables
 ## Local variables:
 ## allout-layout: (+ : 0)
 ## End:
+
+

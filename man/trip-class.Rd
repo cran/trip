@@ -1,4 +1,4 @@
-%% $Id: trip-class.Rd 100 2013-03-27 14:29:56Z sluque $
+%% $Id$
 \name{trip-class}
 \docType{class}
 \alias{trip-class}
@@ -14,8 +14,11 @@
 \alias{recenter,trip-method}
 \alias{show,trip-method}
 \alias{show,summary.TORdata-method}
+\alias{spTransform,trip,CRS-method}
+\alias{spTransform,trip,character-method}
 \alias{print.trip}
 \alias{print.summary.TORdata}
+\alias{as.data.frame.summary.TORdata}
 \alias{summary,trip-method}
 \alias{text,trip-method}
 \alias{subset,trip-method}
@@ -48,6 +51,8 @@
 
   \item{value}{Object to replace time or ID column with.}
 
+  \item{CRSobj}{See \code{\link[sp]{spTransform}}.}
+
 }
 
 
@@ -77,6 +82,9 @@
 \S4method{recenter}{trip}(obj)
 
 \S4method{subset}{trip}(x, \ldots)
+
+\S4method{spTransform}{trip,CRS}(x, CRSobj, \ldots)
+\S4method{spTransform}{trip,character}(x, CRSobj, \ldots)
 
 }
 
@@ -167,8 +175,8 @@
     \item{show}{\code{signature(object="trip")}: Like \code{print}, but
       only takes one argument.}
 
-    % \item{spTransform}{\code{signature(x="trip", "CRS")}: transform
-    % coordinates via rgal PROJ.4}
+    \item{spTransform}{\code{signature(x="trip", "CRS")}: transform
+    coordinates via rgal PROJ.4. See \code{\link[rgdal]{spTransform}}.}
 
     \item{subset}{\code{signature(x="trip")}: subset a trip in the
       expected manner.}

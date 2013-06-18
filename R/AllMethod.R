@@ -168,6 +168,15 @@ setMethod("summary", signature(object="trip"),
               tids <- getTimeID(object)
               time <- tids[, 1]
               ids <- tids[, 2]
+              ## list of distances only, km/hr or units of projection
+              dists <- .distances(object)
+              rmsspeed <- split(speedfilter(object, max.speed = 1, test = TRUE)$rms, ids)
+
+              ## list of time diferences only, in hours
+              dtimes <- lapply(split(time, ids), function(x) diff(unclass(x)/3600))
+              speeds <- vector("list", length(dtimes))
+              for (i in seq_along(speeds)) speeds[[i]] <- dists[[i]] / dtimes[[i]]
+
               obj <- within(obj, {
                   class <- class(object)
                   tmins <- tapply(time, ids, min) +
@@ -182,26 +191,44 @@ setMethod("summary", signature(object="trip"),
                   })
                   tripDurationSeconds <- tapply(time, ids, function(x) {
                       x <- diff(range(unclass(x)))
-                  })
+                  }
+                                                )
+                  tripDistance <- sapply(dists, sum)
+                  meanSpeed <- sapply(speeds, mean)
+                  maxSpeed <- sapply(speeds, max)
+                  meanRMSspeed <- sapply(rmsspeed, mean, na.rm = TRUE)
+                  maxRMSspeed <- sapply(rmsspeed, max, na.rm = TRUE)
               })
               class(obj) <- "summary.TORdata"
               ## invisible(obj)
               obj
           })
 
-print.summary.TORdata <- function(x, ...) {
-    dsumm <- data.frame(tripID=x$tripID,
+as.data.frame.summary.TORdata <- function(x, row.names = NULL, optional = FALSE, ...) {
+        dsumm <- data.frame(tripID=x$tripID,
                         No.Records=x$nRecords,
                         startTime=x$tmins,
                         endTime=x$tmaxs,
-                        tripDuration=x$tripDuration)
-    torns <- x[["TORnames"]]
+                        tripDuration=x$tripDuration,
+                        tripDistance=x$tripDistance,
+                        meanSpeed = x$meanSpeed,
+                        maxSpeed = x$maxSpeed,
+                        meanRMSspeed = x$meanRMSspeed,
+                        maxRMSspeed = x$maxRMSspeed)
+  dsumm
+}
+
+print.summary.TORdata <- function(x, ...) {
+    dsumm <- as.data.frame(x)
+  torns <- x[["TORnames"]]
     names(dsumm)[1] <- paste(names(dsumm)[1],
                              " (\"", torns[2], "\")", sep="")
     names(dsumm)[3] <- paste(names(dsumm)[3],
                              " (\"", torns[1], "\")", sep="")
     names(dsumm)[4] <- paste(names(dsumm)[4],
                              " (\"", torns[1], "\")", sep="")
+
+
     rownames(dsumm) <- seq(nrow(dsumm))
     ## dsumm <- as.data.frame(lapply(dsumm, as.character))
     cat(paste("\nObject of class ", x[["class"]], "\n", sep=""))
