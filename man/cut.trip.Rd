@@ -1,60 +1,29 @@
-%% $Id: cut.trip.Rd 120 2013-05-02 13:04:27Z mdsumner $
 \name{cut.trip}
 \alias{cut.trip}
-
-\title{
-
-  Split trip events into exact time-based boundaries.
-  
-}
-
-
-\description{
-  
-  Split trip events within a single object into exact time boundaries,
-  adding interpolated coordinats as required.
-
-}
-
-
+\title{Split trip events into exact time-based boundaries.}
 \usage{
-\method{cut}{trip}(x, dates, \ldots)
+  \method{cut}{trip} (x, dates, ...)
 }
-%- maybe also 'usage' for other objects documented here.
-
-
 \arguments{
-  
   \item{x}{A trip object.}
 
-  \item{dates}{A vector of date-time boundaries. These must encompass
-    all the time range of the entire trip object.  }
-  \item{\ldots}{Unused arguments.}
+  \item{dates}{A vector of date-time boundaries. These must
+  encompass all the time range of the entire trip object.}
 
+  \item{\dots}{Unused arguments.}
 }
-
-
-\details{
-
-  Motion between boundaries is assumed linear and extra coordinates are
-  added at the cut points.
-
-}
-
-
 \value{
-  
-  A list of trip objects, named by the time boundary in which they lie.
-
+  A list of trip objects, named by the time boundary in
+  which they lie.
 }
-
-
-\author{Michael D. Sumner}
-
-
-\seealso{See also \code{\link{tripGrid}}.}
-
-
+\description{
+  Split trip events within a single object into exact time
+  boundaries, adding interpolated coordinats as required.
+}
+\details{
+  Motion between boundaries is assumed linear and extra
+  coordinates are added at the cut points.
+}
 \examples{
 \dontrun{
 set.seed(66)
@@ -116,8 +85,12 @@ print("you may need to resize the window to see the grid data")
 
 }
 }
-
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{manip}
+\author{
+  Michael D. Sumner and Sebastian Luque
+}
+\seealso{
+  See also \code{\link{tripGrid}}.
+}
 \keyword{chron}
+\keyword{manip}
+

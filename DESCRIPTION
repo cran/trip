@@ -1,23 +1,23 @@
 Package: trip
 Type: Package
 Title: Spatial analysis of animal track data
-Authors@R: c(person("Michael", "Sumner", role = c("aut", "cre"), email
-        = "mdsumner@gmail.com"), person("Sebastian", "Luque", role =
-        "ctb", email = "spluque@gmail.com"))
-Version: 1.1-15
-Depends: methods, sp (>= 0.9-64), spatstat (>= 1.18-4)
-Imports: maptools, sp
-Suggests: adehabitatLT, lattice
-Author: Michael Sumner[aut, cre], Sebastian Luque [ctb]
-Maintainer: Michael D. Sumner <mdsumner@gmail.com>
+Authors@R: c(person("Michael D.","Sumner", role = c("aut", "cre"),
+    email = "mdsumner@gmail.com"),
+    person("Sebastian", "Luque", role = "ctb",
+    email = "spluque@gmail.com"))
+Version: 1.1-16
+Depends: methods, sp
+Imports: sp, maptools, MASS, spatstat
+Suggests: maptools, adehabitatLT
 Description: Functions for accessing and manipulating spatial data for
-        animal tracking.  Filter for speed and create time spent plots
-        from animal track data.
-Collate: AllClass.R AllGenerics.R AllMethod.R trip.R trip.split.R
-        trip2other.R tripGrid.R trackDistance.R filter.penSS.R
-        oc.theme.R readDiag.R speedfilter.R
-License: GPL (>= 2)
-Packaged: 2013-06-18 05:28:53 UTC; michae_sum
+    animal tracking.  Filter for speed and create time spent plots
+    from animal track data.
 NeedsCompilation: no
+ByteCompile: yes
+License: GPL-3
+Packaged: 2013-08-07 12:51:32 UTC; mdsumner
+Author: Michael D. Sumner [aut, cre],
+  Sebastian Luque [ctb]
+Maintainer: Michael D. Sumner <mdsumner@gmail.com>
 Repository: CRAN
-Date/Publication: 2013-06-18 08:16:09
+Date/Publication: 2013-08-07 15:02:29

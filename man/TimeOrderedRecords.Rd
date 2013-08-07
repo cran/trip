@@ -1,0 +1,21 @@
+\name{TimeOrderedRecords}
+\alias{TimeOrderedRecords}
+\title{TimeOrderedRecords}
+\usage{
+  TimeOrderedRecords(x)
+}
+\arguments{
+  \item{x}{Character vector of 2 elements specifying the
+  data columns of DateTimes and IDs}
+}
+\value{
+  \code{TimeOrderedRecords} holds a 2-element character
+  vector, naming the data columns of DateTimes and IDs.
+}
+\description{
+  Object to identify DateTimes and IDs in a Spatial object.
+}
+\examples{
+##' tor <- TimeOrderedRecords(c("datetime", "ID"))
+}
+

@@ -1,7 +1,39 @@
 # $Id: oc.theme.R 74 2013-03-21 15:28:34Z sluque $
 
+
+
+#' SeaWiFS ocean colour colours
+#' 
+#' 
+#' Generate ocean colour colours, using the SeaWiFS scheme
+#' 
+#' 
+#' This is a high-contrast palette, log-scaled originally for ocean
+#' chlorophyll.
+#' 
+#' @aliases oc.theme oc.colors
+#' @param x Number of colours to generate as part of a theme
+#' @param n Number of colours to generate
+#' @return A set of colours or a theme object.
+#' @seealso
+#' 
+#' Similar functions in sp \code{\link[sp]{sp.theme}},
+#' \code{\link[sp]{bpy.colors}}
+#' @keywords color
+#' @examples
+#' \dontrun{
+#'  oc.colors(10)
+#'  library(lattice)
+#'  trellis.par.set(oc.theme())
+#'  utils::example("trip-methods", package="trip",
+#'                 ask=FALSE, echo=FALSE)
+#'  tg <- tripGrid(tr)
+#'  spplot(tg)
+#' }
+#' @export oc.theme
 oc.theme <- function(x=50) list(regions=list(col=oc.colors(x)))
 
+##' @rdname trip-internal
 .oc.col <- c("#FFFFFF", "#A00AFF", "#A013FF", "#A01DFF", "#A027FF",
              "#A031FF", "#A03BFF", "#A045FF", "#A050FF", "#A05AFF",
              "#9C5FFF", "#9560FF", "#8F60FF", "#8860FF", "#8160FF",
@@ -55,6 +87,8 @@ oc.theme <- function(x=50) list(regions=list(col=oc.colors(x)))
              "#C20000", "#BD0000", "#B80000", "#B30000", "#AE0000",
              "#AA0000")
 
+##' @rdname oc.theme
+##' @export
 oc.colors <- grDevices::colorRampPalette(trip:::.oc.col)
 
 

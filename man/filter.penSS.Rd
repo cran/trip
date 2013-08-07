@@ -1,90 +1,47 @@
-%% $Id: filter.penSS.Rd 96 2013-03-26 13:33:36Z sluque $
 \name{filter.penSS}
 \alias{filter.penSS}
-%- Also NEED an '\alias' for EACH other topic documented here.
-
 \title{Non-destructive smoothing filter}
-
-
-\description{
-  
-  Non-destructuve filter for track data using penalty smoothing on
-  velocity.
-  
-}
-
-
 \usage{
-
-filter.penSS(tr, lambda, first=TRUE, last=TRUE, \ldots)
-
+  filter.penSS(tr, lambda, first = TRUE, last = TRUE, ...)
 }
-%- maybe also 'usage' for other objects documented here.
-
-
 \arguments{
-
   \item{tr}{A \code{trip} object.}
 
   \item{lambda}{Smoothing parameter, see Details.}
 
-  \item{first}{Fix the first location and prevent it from being updated
-    by the filter.}
-  
-  \item{last}{Fix the last location and prevent it from being updated by
-    the filter.}
-  
-  \item{\ldots}{%% ~~Describe \code{\dots} here~~
-  }
+  \item{first}{Fix the first location and prevent it from
+  being updated by the filter.}
 
+  \item{last}{Fix the last location and prevent it from
+  being updated by the filter.}
+
+  \item{\dots}{Arguments passed on to \code{\link{nlm}}}
 }
-
-
+\value{
+  A trip object with updated coordinate values based on the
+  filter - all the data, including original coordinates
+  which are maintained in the trip data frame.
+}
+\description{
+  Non-destructive filter for track data using penalty
+  smoothing on velocity.
+}
 \details{
+  Destructive filters such as \code{\link{speedfilter}} can
+  be recast using a penalty smoothing approach in the style
+  of Green and Silverman (1994).
 
-  Destructive filters such as \code{\link{speedfilter}} can be recast
-  using a penalty smoothing approach in the style of Green and Silverman
-  (1994).
-
-  This filter works by penalizing the fit of the smoothed track to the
-  observed locations by the sum of squared velocities.  That is, we
-  trade off goodness of fit against increasing the total sum of squared
-  velocities.
+  This filter works by penalizing the fit of the smoothed
+  track to the observed locations by the sum of squared
+  velocities.  That is, we trade off goodness of fit
+  against increasing the total sum of squared velocities.
 
   When lambda=0 the smoothed track reproduces the raw track
-  exactly. Increasing lambda favours tracks requiring less extreme
-  velocities, at the expense of reproducing the original locations.
-
+  exactly. Increasing lambda favours tracks requiring less
+  extreme velocities, at the expense of reproducing the
+  original locations.
 }
-
-
-\value{
-
-  A trip object with updated coordinate values based on the filter - all
-  the data, including original coordinates which are maintained in the
-  trip data frame.
-
-}
-
-
-\references{
-
-  Green, P. J. and Silverman, B. W. (1994). Nonparametric regression and
-  generalized linear models: a roughness penalty approach. CRC Press.
-
-}
-
-
-\author{Simon Wotherspoon and Michael Sumner}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-
-\seealso{\code{\link{speedfilter}}}
-
-
 \examples{
-
 \dontrun{## Example takes a few minutes
 
 ## Fake some data
@@ -129,11 +86,18 @@ trf <- filter.penSS(tr, lambda=1, iterlim=400, print.level=1)
 lines(trf)
 
 }
-
 }
-
-
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+\author{
+  Simon Wotherspoon and Michael Sumner
+}
+\references{
+  Green, P. J. and Silverman, B. W. (1994). Nonparametric
+  regression and generalized linear models: a roughness
+  penalty approach. CRC Press.
+}
+\seealso{
+  \code{\link{speedfilter}}
+}
 \keyword{manip}
-\keyword{misc}% __ONLY ONE__ keyword per line
+\keyword{misc}
+

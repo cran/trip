@@ -1,4 +1,3 @@
-# $Id: tripGrid.R 107 2013-03-27 23:55:42Z sluque $
 
 ## TODO:
 ## a version of tripGrid that takes Lines, so
@@ -8,15 +7,39 @@
 
 ## replaces tripGrid, old version is now called tripGrid.interp
 
-.g2ow <- function(x) {
-    mn <- x@cellcentre.offset - x@cellsize / 2
-    mx <- mn + x@cells.dim * x@cellsize
-    owin(c(mn[1], mx[1]), c(mn[2], mx[2]),
-         mask=matrix(TRUE, x@cells.dim[2], x@cells.dim[1]),
-         xy=list(x=seq(mn[1], mx[1], length=x@cells.dim[1]),
-           y=seq(mn[2], mx[2], length=x@cells.dim[2])))
-}
 
+
+#' Generate a grid of time spent by line-to-cell gridding
+#' 
+#' 
+#' Create a grid of time spent from an object of class \code{trip} by exact
+#' cell crossing methods, weighted by the time between locations for separate
+#' trip events.
+#' 
+#' 
+#' Zero-length lines cannot be summed directly, their time value is summed by
+#' assuming the line is a point. A warning is given. The density method returns
+#' proportionate values, not summed time durations.
+#' 
+#' See \code{pixellate.psp} and \code{pixellate.ppp} for the details on the
+#' method used. See \code{density.psp} for method="density".
+#' 
+#' Trip events are assumed to start and end as per the object passed in. To
+#' work with inferred "cutoff" positions see \code{split.trip.exact}.
+#' 
+#' @param x object of class \code{trip}
+#' @param grid GridTopology - will be generated automatically if NULL
+#' @param method pixellate or density
+#' @param \dots pass arguments to density.psp if that method is chosen (and
+#' temporary mechanism to direct users of legacy methods to
+#' \code{\link{tripGrid.interp}})
+#' @return
+#' 
+#' \code{tripGrid} returns an object of class \code{SpatialGridDataFrame}, with
+#' one column "z" containing the time spent in each cell in seconds.
+#' @keywords manip
+#' @export tripGrid
+#' @importFrom spatstat psp ppp [.psp pixellate pixellate.psp lengths.psp density.ppp density.psp owin
 tripGrid <- function (x, grid=NULL, method="pixellate", ...)
 {
     if (method %in% c("kde", "count")) {
@@ -38,7 +61,7 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
     res <- as.image.SpatialGridDataFrame(spgdf)
     tor <- x@TOR.columns
     trip.list <- split.data.frame(x[, tor], x[[tor[2]]])
-    ow <- trip:::.g2ow(grid)
+    ow <- .g2ow(grid)
     sm <- 0
     zero.lengths <- FALSE
     sz <- 0
@@ -47,19 +70,20 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
         ys <- coordinates(this)[, 2]
         dt <- diff(unclass(this[[tor[1]]]))
         sm <- sm + sum(dt)
-        x.psp <- spatstat::psp(xs[-length(xs)], ys[-length(ys)], xs[-1],
+        x.psp <- psp(xs[-length(xs)], ys[-length(ys)], xs[-1],
                                ys[-1], window=ow)
-        lngths <- spatstat::lengths.psp(x.psp)
+      
+        lngths <- lengths.psp(x.psp)
         if (any(!lngths > 0)) {
             ## trim psp objects (0-lines give NaNs)
             zero.lengths <- TRUE
             zeros <- which(!lngths > 0)
             cc <- coordinates(this)[zeros, , drop=FALSE]
             op <- options(warn=-1)
-            x.ppp <- spatstat::ppp(cc[, 1], cc[, 2], window=ow)
+            x.ppp <- ppp(cc[, 1], cc[, 2], window=ow)
             options(op)
             if (method == "pixellate") {
-                v <- spatstat::pixellate(x.ppp, W=ow, weights=dt[zeros])$v
+                v <- pixellate(x.ppp, W=ow, weights=dt[zeros])$v
             }
             if (method == "density") {
                 v <- density(x.ppp, ...)$v
@@ -71,7 +95,8 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
         weights <- dt/ifelse(lngths > 0, lngths, .Machine$double.eps)
         weights <- weights[lngths > 0]
         if (method == "pixellate") {
-            v <- spatstat::pixellate(x.psp, W=ow, weights=weights)$v
+ 
+            v <- pixellate.psp(x.psp, W=ow, weights=weights)$v
         }
         if (method == "density") {
             ## v <- density(x.psp, ...)$v
@@ -102,9 +127,14 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
     image2Grid(res, p4=proj4string(x))
 }
 
+##' @rdname trip-internal
+.g2ow <- function(x) {
+  mn <- x@cellcentre.offset - x@cellsize / 2
+  mx <- mn + x@cells.dim * x@cellsize
+  owin(c(mn[1], mx[1]), c(mn[2], mx[2]),
+       mask=matrix(TRUE, x@cells.dim[2], x@cells.dim[1]),
+       xy=list(x=seq(mn[1], mx[1], length=x@cells.dim[1]),
+               y=seq(mn[2], mx[2], length=x@cells.dim[2])))
+}
 
 
-###_ + Emacs local variables
-## Local variables:
-## allout-layout: (+ : 0)
-## End:

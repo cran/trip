@@ -1,6 +1,17 @@
-# $Id: trackDistance.R 74 2013-03-21 15:28:34Z sluque $
 
 ## taken from package sp/src/gcdist.c
+
+##' @rdname trip-internal
+.distances <- function(x) {
+  proj <- is.projected(x)
+  if (is.na(proj)) proj <- FALSE
+
+
+  lapply(split(x, x[[getTORnames(x)[2]]]), function(x) trackDistance(coordinates(x), longlat = !proj))
+
+}
+
+##' @rdname trip-internal
 .gcdist.c <- function(lon1, lat1, lon2, lat2) {
     DE2RA <- pi / 180
     a <- 6378.137            # /* WGS-84 equatorial radius in km */
@@ -33,9 +44,65 @@
     dist
 }
 
-trackDistance <- function(x) UseMethod("trackDistance")
+##trackDistance <- function(x) UseMethod("trackDistance")
 
-trackDistance <- function(x1, y1, x2, y2, longlat=TRUE) {
+
+#' Determine distances along a track
+#'
+#'
+#' Calculate the distances between subsequent 2-D coordinates using Euclidean
+#' or Great Circle distance (WGS84 ellipsoid) methods.
+#'
+#'
+#' If \code{x1} is a trip object, arguments \code{x2}, \code{x3}, \code{y2} are
+#' ignored and the return result has an extra element for the start point of
+#' each individual trip, with value 0.0.
+#'
+#' The \code{prev} argument is ignore unless x1 is a trip.
+#'
+#' Distance values are in the units of the input coordinate system when longlat
+#' is FALSE, and in kilometres when longlat is TRUE.
+#'
+#' This originally used \code{\link[sp]{spDistsN1}} but now implements the sp
+#' \code{gcdist} source directly in R.
+#'
+#' @aliases trackDistance trackDistance.default trackDistance.trip
+#' @param x1 trip object, matrix of 2-columns, with x/y coordinates OR a vector
+#' of x start coordinates
+#' @param x2 vector of x end coordinates, if x1 is not a matrix
+#' @param y1 vector of y start coordinates, if x1 is not a matrix
+#' @param y2 vector of y end coordinates, if x1 is not a matrix
+#' @param longlat if FALSE, Euclidean distance, if TRUE Great Circle distance
+#' @param prev if TRUE and x1 is a trip, the return value has a padded end
+#' value (\"prev\"ious), rather than start (\"next\")
+#' @return Vector of distances between coordinates.
+#' @references Original source taken from sp package.
+#' @author Roger Bivand and Michael Sumner
+#' @examples
+#'   ## Continuing the example from '?"trip-methods"':
+#' utils::example("trip-methods", package="trip",
+#'                ask=FALSE, echo=FALSE)
+#'
+#'  ## the method knows this is a trip, so there is a distance for every
+#'  ## point, including 0s as the start and at transitions between
+#'  ## individual trips
+#' trackDistance(tr)
+#'
+#' ## the default method does not know about the trips, so this is
+#' ##(n-1) distances between all points
+#' ## trackDistance(coordinates(tr), longlat = FALSE)
+#'
+#' ## we get NA at the start, end and at transitions between trips
+#'
+#'  \dontrun{
+#'  require(rgdal)
+#'  trackAngle(tr)
+#'  }
+#' @export trackDistance
+trackDistance <- function(x1, y1, x2, y2, longlat=TRUE, prev = FALSE) UseMethod("trackDistance")
+
+##' @export
+trackDistance.default <- function(x1, y1, x2, y2, longlat=TRUE, prev = FALSE) {
     if (missing(y1)) {
         if (!is.matrix(x1))
             stop("x1 is not a matrix and multiple arguments not specified")
@@ -54,10 +121,36 @@ trackDistance <- function(x1, y1, x2, y2, longlat=TRUE) {
     } else sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 }
 
+##' @export
+trackDistance.trip <- function(x1, y1, x2, y2, longlat = TRUE, prev = FALSE) {
+    unlist(lapply(.distances(x1), function(x) if (prev) {c(x, 0)} else {c(0, x)}))
+}
+
+
+
+
+#' Determine distances or angles along a track
+#'
+#'
+#' Calculate the angles between subsequent 2-D coordinates using Great Circle
+#' distance (spherical) methods.
+#'
+#' If \code{x} is a trip object, the return result has an extra element for the
+#' start and end point of each individual trip, with value NA.
+#'
+#' This is an optimized hybrid of "raster::bearing" and
+#' \code{\link[maptools]{gzAzimuth}}.
+#'
+#' @aliases trackAngle trackAngle.default trackAngle.trip
+#' @param x trip object, or matrix of 2-columns, with x/y coordinates
+#' @return Vector of angles (degrees) between coordinates.
+#' @author Robert Hijmans, Roger Bivand
+#' @export trackAngle
 trackAngle <- function(x) {
   UseMethod("trackAngle")
 }
 
+#' @export
 trackAngle.trip <- function(x) {
   isproj <- is.projected(x)
   if (is.na(isproj)) {
@@ -92,7 +185,7 @@ trackAngle.default <- function(x) {
 
 
 ## "abdali", replacement for raster::bearing
-
+##' @rdname trip-internal
 .abdali <- function (p1, p2)
 {
   stopifnot(nrow(p1) == nrow(p2))
@@ -131,7 +224,3 @@ trackAngle.default <- function(x) {
 ##1 trackAngle(x, type = "geosphere")          300    8.49    5.241      8.49        0         NA        NA
 
 
-###_ + Emacs local variables
-## Local variables:
-## allout-layout: (+ : 0)
-## End:
