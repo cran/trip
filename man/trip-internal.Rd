@@ -11,11 +11,11 @@
 \alias{.validTORdata}
 \alias{trip-internal}
 \title{Internal trip Functions}
-\format{chr [1:256] "#FFFFFF" "#A00AFF" "#A013FF" "#A01DFF" ...}
+\format{chr [1:256] "#FFFFFF" "#A00AFF" "#A013FF" "#A01DFF" "#A027FF" ...}
 \usage{
   .validTORdata(object)
 
-  .oc.col
+  .intpFun(x)
 
   .distances(x)
 
@@ -23,11 +23,11 @@
 
   .abdali(p1, p2)
 
-  .intpFun(x)
-
   .tripRbind(obj, x)
 
   .single.trip.split(tr1, boundary.dates)
+
+  .oc.col
 
   .g2ow(x)
 }

@@ -118,7 +118,8 @@ tr <- trip(dat, c("gmt", "seal"))
    ext <- as(extent(spTransform(porpoise, CRS(proj4string(wrld_simpl)))) + 3, "SpatialPolygons")
    proj4string(ext) <- CRS(proj4string(wrld_simpl))
    ## crop to the buffered tracks, and project to its native CRS
-   w <- spTransform(gIntersection(wrld_simpl[grep("United States", wrld_simpl$NAME), ], ext), CRS(proj4string(porpoise)))
+   w <- spTransform(gIntersection(wrld_simpl[grep("United States", wrld_simpl$NAME), ], ext),
+    CRS(proj4string(porpoise)))
 
    plot(w)
    lines(porpoise)

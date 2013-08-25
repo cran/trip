@@ -2,9 +2,13 @@
 \alias{trackAngle}
 \alias{trackAngle.default}
 \alias{trackAngle.trip}
-\title{Determine distances or angles along a track}
+\title{Determine internal angles along a track}
 \usage{
   trackAngle(x)
+
+  \method{trackAngle}{trip} (x)
+
+  \method{trackAngle}{default} (x)
 }
 \arguments{
   \item{x}{trip object, or matrix of 2-columns, with x/y
@@ -24,8 +28,5 @@
 
   This is an optimized hybrid of "raster::bearing" and
   \code{\link[maptools]{gzAzimuth}}.
-}
-\author{
-  Robert Hijmans, Roger Bivand
 }
 

@@ -60,7 +60,7 @@ utils::example("trip-methods", package="trip",
 ## Continuing the example from '?trip-methods:
 utils::example("trip-methods", package="trip",
            ask=FALSE, echo=FALSE)
-spldf <- trip:::explode(tr)
+spldf <- explode(tr)
 summary(tr)
 }
 

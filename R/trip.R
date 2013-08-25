@@ -1,40 +1,3 @@
-# $Id$
-
-
-setMethod("spTransform", signature("trip", "CRS"),
-          function(x, CRSobj, ...) {
-              if (!("rgdal" %in% loadedNamespaces())) {
-                  ns <- try(loadNamespace("rgdal"))
-                  if (isNamespace(ns)) {
-                      message("[loaded the rgdal namespace]")
-                  } else {
-                      msg <- paste("This method requires the rgdal package",
-                                   "but is unable to load rgdal namespace",
-                                   sep=",")
-                      stop(msg)
-                  }
-              }
-              pts <- spTransform(as(x, "SpatialPointsDataFrame"),
-                                 CRSobj, ...)
-              trip(pts, getTORnames(x))
-          })
-
-## method to allow transformation with character only
-setMethod("spTransform", signature("Spatial", "character"), 
-          function(x, CRSobj, ...) {
-            
-            .local <- function (object, pstring, ...) 
-            {
-              crs <- try(CRS(pstring))
-              if (inherits(crs, "try-error")) { stop(sprintf("cannot determine valid CRS from %s", pstring))
-              } else {
-                spTransform(x, crs)
-              }
-            }
-            
-            .local(x, pstring = CRSobj, ...)
-            
-          })
 
 ###_ + Functions
 
@@ -45,20 +8,20 @@ setMethod("spTransform", signature("Spatial", "character"),
 
 
 #' Function to ensure dates and times are in order with trip ID
-#' 
-#' 
+#'
+#'
 #' A convenience function, that removes duplicate rows, sorts by the date-times
 #' within ID, and removes duplicates from a data frame or
 #' SpatialPointsDataFrame.
-#' 
-#' 
+#'
+#'
 #' @param x \code{\link{data.frame}} or
 #' \code{\link[sp]{SpatialPointsDataFrame}}
 #' @param tor character vector of names of date-times and trip ID columns
 #' @return \code{\link{data.frame}} or
 #' \code{\link[sp]{SpatialPointsDataFrame}}.
 #' @note
-#' 
+#'
 #' It's really important that data used are of a given quality, but this
 #' function makes the most common trip problems easy to apply.
 #' @seealso \code{\link{trip}}
@@ -92,307 +55,100 @@ forceCompliance <- function(x, tor) {
 }
 
 interpequal <- function(x, dur=NULL, quiet=FALSE) {
-    if (!is(x, "trip"))
-        stop("only trip objects supported")
-    if (is.null(dur))
-        stop("equal time duration must be specified \"dur=?\"")
-    ## x must be a single trip
-    tor <- getTORnames(x)
-    tids <- getTimeID(x)
-    time <- tids[, 1]
-    id <- factor(tids[, 2])
-    coords <- coordinates(x)
-    x <- coords[,1]
-    y <- coords[,2]
-    levs <- levels(id)
-    newPts <- NULL
-    ##if (is.null(dur))
-    ##   dur <- as.numeric(min(unlist(tapply(as.integer(time),
-    ##            id, diff))))
-    for (sub in levs) {
-        ind <- id == sub
-        xx <- x[ind]
-        yy <- y[ind]
-        tms <- time[ind]
-        dt <- diff(as.numeric(tms))
-        dtn <- dt/dur
-        ax <- cbind(xx, c(xx[-1], xx[length(xx)]), c(dtn, 0))
-        ay <- cbind(yy, c(yy[-1], yy[length(yy)]), c(dtn, 0))
-        intime <- as.numeric(tms) - min(as.numeric(tms))
-        at <- cbind(intime, c(intime[-1], intime[length(intime)]),
-	            c(dtn, 0))
-        nx <- unlist(apply(ax, 1, trip:::.intpFun))
-        ny <- unlist(apply(ay, 1, trip:::.intpFun))
-        nt <- unlist(apply(at, 1, trip:::.intpFun)) + min(tms)
-        ni <- factor(rep(sub, length=length(nt)))
-        newPts <- rbind(newPts,
-                        data.frame(x=nx, y=ny, time=nt, id=ni))
-    }
-    origTotal <- sum(tapply(time, id, function(x) {
-        diff(range(as.numeric(x)))
-        }))
-    newTotal <- nrow(newPts) * dur
-    uType <- "hours"
-    hTotal <- sum(tapply(time, id, function(x) {
-        difftime(range(x)[2], range(x)[1], units=uType)
-        }))
-    if (!quiet) {
-        cat("lost seconds=", as.integer(origTotal - newTotal),
-            " out of a total ", hTotal, " ", uType, "\n")
-    }
-    coordinates(newPts) <- c("x", "y")
-    names(newPts) <- tor
-    newPts
+  if (!is(x, "trip"))
+    stop("only trip objects supported")
+  if (is.null(dur))
+    stop("equal time duration must be specified \"dur=?\"")
+  ## x must be a single trip
+  tor <- getTORnames(x)
+  tids <- getTimeID(x)
+  time <- tids[, 1]
+  id <- factor(tids[, 2])
+  coords <- coordinates(x)
+  x <- coords[,1]
+  y <- coords[,2]
+  levs <- levels(id)
+  newPts <- NULL
+  ##if (is.null(dur))
+  ##   dur <- as.numeric(min(unlist(tapply(as.integer(time),
+  ##            id, diff))))
+  for (sub in levs) {
+    ind <- id == sub
+    xx <- x[ind]
+    yy <- y[ind]
+    tms <- time[ind]
+    dt <- diff(as.numeric(tms))
+    dtn <- dt/dur
+    ax <- cbind(xx, c(xx[-1], xx[length(xx)]), c(dtn, 0))
+    ay <- cbind(yy, c(yy[-1], yy[length(yy)]), c(dtn, 0))
+    intime <- as.numeric(tms) - min(as.numeric(tms))
+    at <- cbind(intime, c(intime[-1], intime[length(intime)]),
+                c(dtn, 0))
+    nx <- unlist(apply(ax, 1, .intpFun))
+    ny <- unlist(apply(ay, 1, .intpFun))
+    nt <- unlist(apply(at, 1, .intpFun)) + min(tms)
+    ni <- factor(rep(sub, length=length(nt)))
+    newPts <- rbind(newPts,
+                    data.frame(x=nx, y=ny, time=nt, id=ni))
+  }
+  origTotal <- sum(tapply(time, id, function(x) {
+    diff(range(as.numeric(x)))
+  }))
+  newTotal <- nrow(newPts) * dur
+  uType <- "hours"
+  hTotal <- sum(tapply(time, id, function(x) {
+    difftime(range(x)[2], range(x)[1], units=uType)
+  }))
+  if (!quiet) {
+    cat("lost seconds=", as.integer(origTotal - newTotal),
+        " out of a total ", hTotal, " ", uType, "\n")
+  }
+  coordinates(newPts) <- c("x", "y")
+  names(newPts) <- tor
+  newPts
 }
 
 
 
-#' Generate a grid of time spent using approximate methods
-#' 
-#' 
-#' Create a grid of time spent from an object of class \code{trip} by
-#' approximating the time between locations for separate trip events.
-#' 
-#' 
-#' This set of functions was the the original tripGrid from prior to version
-#' 1.1-6. \code{tripGrid} should be used for more exact and fast calculations
-#' assuming linear motion between fixes.
-#' 
-#' The intention is for \code{tripGrid.interp} to be used for exploring
-#' approximate methods of line-to-cell gridding.
-#' 
-#' Trip locations are first interpolated, based on an equal-time spacing
-#' between records. These interpolated points are then "binned" to a grid of
-#' cells.  The time spacing is specified by the "dur"ation argument to
-#' \code{interpequal} in seconds (i.e. \code{dur=3600} is used for 1 hour).
-#' Shorter time periods will require longer computation with a closer
-#' approximation to the total time spent in the gridded result.
-#' 
-#' Currently there are methods "count" and "kde" for quantifying time spent,
-#' corresponding to the functions "countPoints" and "kdePoints". "kde" uses
-#' kernel density to smooth the locations, "count" simply counts the points
-#' falling in a grid cell.
-#' 
-#' @aliases tripGrid.interp interpequal countPoints kdePoints
-#' @param x object of class trip
-#' @param grid GridTopology - will be generated automatically if NULL
-#' @param method name of method for quantifying time spent, see Details
-#' @param dur The \"dur\"ation of time used to interpolate between available
-#' locations (see Details)
-#' @param \dots other arguments passed to \code{interpequal} or \code{kdePoints}
-#' @return
-#' 
-#' \code{tripGrid} returns an object of class \code{SpatialGridDataFrame}, with
-#' one column "z" containing the time spent in each cell in seconds. If
-#' kdePoints is used the units are not related to the time values and must be
-#' scaled for further use.
-#' @keywords manip
-#' @export tripGrid.interp
-tripGrid.interp <- function(x, grid=NULL, method="count", dur=NULL, ...) {
-    method <- paste(method, "Points", sep="")
-    if (!exists(method)) stop("no such method: ", method)
-    cat("Using method ", method, "\n\n")
-    if (is.null(grid)) grid <- makeGridTopology(x)
-    res <- SpatialGridDataFrame(grid,
-                                data.frame(z=rep(0, prod(grid@cells.dim))),
-                                CRS(proj4string(x)))
-    tor <- getTORnames(x)
-    trip.list <- split(x[, tor], x[[tor[2]]])
-    cnt <- 0
-    for (this in trip.list) {
-        this <- interpequal(this, dur=dur, quiet=TRUE)
-        cnt <- cnt + nrow(this)
-        res$z <- res$z + do.call(method,
-                                 list(x=trip(this, tor), grid=grid, ...))$z
-    }
-    if (method == "countPoints") res$z <- res$z * dur
-    res
-}
-
-#' @param h kernel bandwidth
-#' @param resetTime rescale result back to the total duration of the input
-#' @rdname tripGrid.interp
-#' @seealso \code{\link[MASS]{bandwidth.nrd}} for the calculation of bandwidth values used internally when not supplied by the user
-##' @importFrom MASS bandwidth.nrd
-kdePoints <- function (x, h=NULL, grid=NULL, resetTime=TRUE, ...) {
-    coords <- coordinates(x)
-    xx <- coords[ , 1]
-    yy <- coords[ , 2]
-    tids <- getTimeID(x)
-    time <- tids[, 1]
-    id <- tids[, 2]
-    timesum <- sum(tapply(time, id, function(x) {
-        diff(range(unclass(x)))
-    }))
-    ## must acknowledge MASS for this
-    if (missing(h)) {
-        h <- c(bandwidth.nrd(xx), bandwidth.nrd(yy))/10
-    }
-    if (is.null(grid))  grid <- makeGridTopology(coords, ...)
-    ## use bbox here
-    dimXY <- grid@cells.dim
-    nx <- nrow(x)
-    gcs <- coordinatevalues(grid)
-    gx <- gcs$s1 + grid@cellsize[1]
-    gy <- gcs$s2 + grid@cellsize[2]
-    ax <- outer(gx, xx, "-")/h[1]
-    ay <- outer(gy, yy, "-")/h[2]
-    z <- (matrix(dnorm(ax), dimXY[1], nx) %*%
-          t(matrix(dnorm(ay), dimXY[2], nx))) / (nx * h[1] * h[2])
-    if (resetTime) z <- (z * timesum/sum(z)) / 3600
-    SpatialGridDataFrame(grid, data.frame(z=as.vector(z)), CRS(proj4string(x)))
-}
-
-#' @rdname tripGrid.interp
-countPoints <- function (x, dur=1, grid=NULL)
-{
-    coords <- coordinates(x)
-    xx <- coords[, 1]
-    yy <- coords[, 2]
-    if (is.null(grid))  grid <- makeGridTopology(coords)
-    orig <- grid@cellcentre.offset - grid@cellsize / 2
-    ## scl <- c(diff(grd$x)[1], diff(grd$y)[1])
-    scl <- grid@cellsize
-    xdim <- grid@cells.dim[1]
-    ydim <- grid@cells.dim[2]
-    xmin <- orig[1]
-    xmax <- orig[1] + (xdim + 1) * scl[1]
-    ymin <- orig[2]
-    ymax <- orig[2] + (ydim + 1) * scl[2]
-    xlim <- c(xmin, xmax)
-    ylim <- c(ymin, ymax)
-    if (xlim[1] < xmin || xlim[2] > (xmax) ||
-        ylim[1] < ymin || ylim[2] > (ymax)) {
-        stop("Data are out of bounds")
-    }
-    cps <- ceiling(cbind((xx - orig[1]) / scl[1], (yy - orig[2]) / scl[2]))
-    tps <- tabulate((cps[, 1] - 1) * ydim + cps[, 2], xdim * ydim)
-    mps <- matrix(tps, ydim, xdim)
-    z <- t(mps)
-    SpatialGridDataFrame(grid, data.frame(z=as.vector(z[, ncol(z):1])),
-                         CRS(proj4string(x)))
-}
-
-
-
-
-#' Generate a GridTopology from a Spatial object
-#' 
-#' 
-#' Sensible defaults are assumed, to match the extents of data to a manageable
-#' grid.
-#' 
-#' Approximations for kilometres in longlat can be made using \code{cellsize}
-#' and \code{adjust2longlat}.
-#' 
-#' 
-#' @param obj any Spatial object, or other object for which \code{bbox} will
-#' work
-#' @param cells.dim the number of cells of the grid, x then y
-#' @param xlim x limits of the grid
-#' @param ylim y limits of the grid
-#' @param buffer proportional size of the buffer to add to the grid limits
-#' @param cellsize pixel cell size
-#' @param adjust2longlat assume cell size is in kilometres and provide simple
-#' adjustment for earth-radius cells at the north-south centre of the grid
-#' @keywords manip
-#' @export makeGridTopology
-makeGridTopology <- function (obj, cells.dim=c(100, 100),
-                              xlim=NULL, ylim=NULL, buffer=0, cellsize=NULL,
-                              adjust2longlat=FALSE) {
-    if ((is.null(xlim) | is.null(ylim)) & missing(obj))
-        stop("require at least a Spatial object, matrix object, or xlim and ylim")
-    if (!missing(obj)) bb <- bbox(obj)
-    if (!is.null(xlim) & !is.null(ylim)) buffer <- 0
-    if (is.null(xlim)) xlim <- bb[1,]
-    if (is.null(ylim)) ylim <- bb[2,]
-    ## PROBLEMS
-    ## determination is boundary based, but grid is cell based
-    ## break down into simpler functions, then recombine including longlat adjust
-    ## gridFromNothing - world1 ?
-    ## gridFromLimits
-    ## gridFromLimits/dims
-    ## gridFromLimits/cellsize
-    ##
-    ## gridFromDims?
-    ## gridFromCellsize?
-    ## gridFromDims/Cellsize?
-    ## proj <- NA
-    ## if (!missing(obj)) proj <- is.projected(obj)
-    ## if (is.na(proj)) {
-    ## 	warning("coordinate system unknown, assuming longlat")
-    ## 	proj <- FALSE
-    ## }
-    if (is.null(cellsize) & adjust2longlat)
-        warning("cellsize not provided with adjust2longlat, ignoring")
-    if (!is.null(cellsize)) {
-        if (!length(cellsize) == 2)
-            stop("cellsize must be of length 2")
-        if (adjust2longlat) {
-            cellsize <- c(cellsize[1] /
-                          (cos((pi / 180) * mean(ylim)) * 1.852 * 60),
-                          cellsize[2] / (1.852 * 60))
-            if (any(!cellsize > 0)) {
-                msg <- paste("longlat adjustment resulted in invalid",
-                             "cellsize. Does it really make sense for",
-                             "these latitude limits? \n")
-                stop(msg, paste(format(ylim), collapse=","))
-            }
-        }
-        xvalues <- seq(xlim[1], xlim[2] + cellsize[1], by=cellsize[1])
-        yvalues <- seq(ylim[1], ylim[2] + cellsize[2], by=cellsize[2])
-        xlim <- range(xvalues)
-        ylim <- range(yvalues)
-        cells.dim <- c(length(xvalues), length(yvalues))
-    } else cellsize <- c(diff(xlim), diff(ylim)) / (cells.dim - 1)
-    if (buffer > 0) {
-        addXY <- ceiling(cellsize * buffer)
-        xlim <- xlim + c(-addXY[1], addXY[1])
-        ylim <- ylim + c(-addXY[2], addXY[2])
-        cellsize <- c(diff(xlim), diff(ylim)) / (cells.dim - 1)
-    }
-    new("GridTopology", cellcentre.offset=c(min(xlim), min(ylim)),
-        cellsize=cellsize, cells.dim=as.integer(cells.dim))
-}
 
 
 
 #' Adjust duplicate DateTime values
-#' 
-#' 
+#'
+#'
 #' Duplicated DateTime values within ID are adjusted forward (recursively) by
 #' one second until no duplicates are present. This is considered reasonable
 #' way of avoiding the nonsensical problem of duplicate times.
-#' 
-#' 
+#'
+#'
 #' This function is used to remove duplicate time records in animal track data,
 #' rather than removing the record completely.
-#' 
+#'
 #' @param time vector of DateTime values
 #' @param id vector of ID values, matching DateTimes that are assumed sorted
 #' within ID
 #' @return
-#' 
+#'
 #' The adjusted DateTime vector is returned.
 #' @section Warning:
-#' 
+#'
 #' I have no idea what goes on at CLS when they output data that are either not
 #' ordered by time or have duplicates. If this problem exists in your data it's
 #' probably worth finding out why.
 #' @seealso \code{\link{readArgos}}
 #' @examples
-#' 
-#' 
+#'
+#'
 #' ## DateTimes with a duplicate within ID
-#' tms <- Sys.time() + c(1:6, 6, 7:10) *10 
+#' tms <- Sys.time() + c(1:6, 6, 7:10) *10
 #' id <- rep("a", length(tms))
 #' range(diff(tms))
-#'     
+#'
 #' ## duplicate record is now moved one second forward
 #' tms.adj <- adjust.duplicateTimes(tms, id)
 #' range(diff(tms.adj))
-#' 
-#' 
+#'
+#'
 #' @export adjust.duplicateTimes
 adjust.duplicateTimes <- function (time, id) {
     dups <- unlist(tapply(time, id, duplicated), use.names=FALSE)
@@ -406,37 +162,37 @@ adjust.duplicateTimes <- function (time, id) {
 
 
 #' Assign numeric values for Argos "class"
-#' 
-#' 
+#'
+#'
 #' Assign numeric values for Argos "class" by matching the levels available to
 #' given numbers. An adjustment is made to allow sigma to be specified in
 #' kilometeres, and the values returned are the approximate values for longlat
 #' degrees.  It is assumed that the levels are part of an "ordered" factor from
 #' least precise to most precise.
-#' 
-#' 
+#'
+#'
 #' The available levels in Argos are \code{levels=c("Z", "B", "A", "0", "1",
 #' "2", "3")}.
-#' 
+#'
 #' The actual sigma values given by default are (as far as can be determined) a
 #' reasonable stab at what Argos believes.
-#' 
+#'
 #' @param x factor of Argos location quality "classes"
 #' @param sigma numeric values (by default in kilometres)
 #' @param adjust a numeric adjustment to convert from kms to degrees
 #' @return
-#' 
+#'
 #' Numeric values for given levels.
 #' @keywords manip
 #' @examples
-#' 
-#' 
+#'
+#'
 #' cls <- ordered(sample(c("Z", "B", "A", "0", "1", "2", "3"), 30,
 #'                       replace=TRUE),
 #'                levels=c("Z", "B", "A", "0", "1", "2", "3"))
 #' argos.sigma(cls)
-#' 
-#' 
+#'
+#'
 #' @export argos.sigma
 argos.sigma <- function(x, sigma=c(100, 80, 50, 20, 10, 4,  2),
                         adjust=111.12) {
@@ -448,33 +204,33 @@ argos.sigma <- function(x, sigma=c(100, 80, 50, 20, 10, 4,  2),
 
 
 #' Read Argos "DAT" or "DIAG" files
-#' 
-#' 
+#'
+#'
 #' Return a (Spatial) data frame of location records from raw Argos files.
 #' Multiple files may be read, and each set of records is appended to the data
 #' frame in turn.  Basic validation of the data is enforced by default.
-#' 
-#' 
+#'
+#'
 #' \code{readArgos} performs basic validation checks for class \code{trip} are
 #' made, and enforced based on \code{correct.all}:
-#' 
+#'
 #' No duplicate records in the data, these are simply removed.  Records are
 #' ordered by DateTime ("date", "time", "gmt") within ID ("ptt").  No duplicate
 #' DateTime values within ID are allowed: to enforce this the time values are
 #' moved forward by one second - this is done recursively and is not robust.
-#' 
+#'
 #' If validation fails the function will return a
 #' \code{\link[sp]{SpatialPointsDataFrame}}.  Files that are not obviously of
 #' the required format are skipped.
-#' 
+#'
 #' Argos location quality data "class" are ordered, assuming that the available
 #' levels is \code{levels=c("Z", "B", "A", "0", "1", "2", "3")}.
-#' 
+#'
 #' A projection string is added to the data, assuming the PROJ.4 longlat - if
 #' any longitudes are greater than 360 the PROJ.4 argument "+over" is added.
-#' 
+#'
 #' \code{readDiag} simply builds a \code{data.frame}.
-#' 
+#'
 #' @aliases readArgos readDiag
 #' @param x vector of file names of Argos "DAT" or "DIAG" files.
 #' @param correct.all logical - enforce validity of data as much as possible?
@@ -486,10 +242,10 @@ argos.sigma <- function(x, sigma=c(100, 80, 50, 20, 10, 4,  2),
 #' @param p4 PROJ.4 projection string, "+proj=longlat +ellps=WGS84" is assumed
 #' @param verbose if TRUE, details on date-time adjustment is reported
 #' @return
-#' 
+#'
 #' \code{readArgos} returns a \code{trip} object, if all goes well, or simply a
 #' \code{\link[sp]{SpatialPointsDataFrame}}.
-#' 
+#'
 #' \code{readDiag} returns a \code{data.frame} with 8 columns:
 #' \itemize{
 #' \item {\code{lon1},\code{lat1} first pair of coordinates}
@@ -500,23 +256,23 @@ argos.sigma <- function(x, sigma=c(100, 80, 50, 20, 10, 4,  2),
 #' \item {iq some other thing}
 #' }
 #' @section Warning :
-#' 
+#'
 #' This works on some Argos files I have seen, it is not a guaranteed method
 #' and is in no way linked officially to Argos.
 #' @seealso
-#' 
+#'
 #' \code{\link{trip}}, \code{\link[sp]{SpatialPointsDataFrame}},
 #' \code{\link{adjust.duplicateTimes}}, for manipulating these data, and
 #' \code{\link{argos.sigma}} for relating a numeric value to Argos quality
 #' "classes".
-#' 
+#'
 #' \code{\link{sepIdGaps}} for splitting the IDs in these data on some minimum
 #' gap.
-#' 
+#'
 #' \code{\link{order}}, \code{\link{duplicated}}, , \code{\link{ordered}} for
 #' general manipulation of this type.
 #' @references
-#' 
+#'
 #' The Argos data documentation is at
 #' \url{http://www.argos-system.org/manual/}.  Specific details on the PRV
 #' ("provide data") format were found here
@@ -528,10 +284,13 @@ readArgos <- function (x, correct.all=TRUE, dtFormat="%Y-%m-%d %H:%M:%S",
                        p4="+proj=longlat +ellps=WGS84", verbose=FALSE) {
     ## add "correct.all" argument - just return data frame if it fails, with
     ## suggestions of how to sort/fix it
-    dout <- NULL
-    for (con in x) {
+
+
+  ## this should be heaps faster
+    dout <- vector("list", length(x))
+    for (icon in seq_along(x)) {
         old.opt <- options(warn=-1)
-        dlines <- strsplit(readLines(con), "\\s+", perl=TRUE)
+        dlines <- strsplit(readLines(x[icon]), "\\s+", perl=TRUE)
         options(old.opt)
         loclines <- sapply(dlines, length) == 12
         if (any(loclines)) {
@@ -540,7 +299,7 @@ readArgos <- function (x, correct.all=TRUE, dtFormat="%Y-%m-%d %H:%M:%S",
             if (dfm[1,7] == "LC") {
                 msg <- paste(" appears to be a diag file, skipping.",
                              "Use readDiag to obtain a dataframe. \n\n")
-            	cat("file ", con, msg)
+            	cat("file ", icon, msg)
             	next
             }
             df <- vector("list", 12)
@@ -553,13 +312,16 @@ readArgos <- function (x, correct.all=TRUE, dtFormat="%Y-%m-%d %H:%M:%S",
             df <- as.data.frame(df)
             df$gmt <- as.POSIXct(strptime(paste(df$date, df$time),
                                           dtFormat), tz)
-            dout <- rbind(dout, df)
+            dout[[icon]] <- df
         } else {
-            cat("Problem with file: ", con, " skipping\n")
+            cat("Problem with file: ", x[icon], " skipping\n")
+
         }
     }
-    if (is.null(dout))
+    if (all(sapply(dout, is.null)))
         stop("No data to return: check the files")
+
+    dout <- do.call(rbind, dout)
     if (correct.all) {
         ## should add a reporting mechanism for these as well
         ##  and return a data.frame if any of the tests fail
@@ -671,39 +433,39 @@ readDiag <- function (x) {
 
 
 #' Separate a set of IDs based on gaps
-#' 
-#' 
+#'
+#'
 #' A new set of ID levels can be created by separating those given based on a
 #' minimum gap in another set of data. This is useful for separating
 #' instruments identified only by their ID into separate events in time.
-#' 
-#' 
+#'
+#'
 #' The assumption is that a week is a long time for a tag not to record
 #' anything.
-#' 
+#'
 #' @param id existing ID levels
 #' @param gapdata data matching \code{id} with gaps to use as separators
 #' @param minGap the minimum "gap" to use in gapdata to create a new ID level
 #' @return
-#' 
+#'
 #' A new set of ID levels, named following the pattern that "ID" split into 3
 #' would provided "ID", "ID\_2" and "ID\_3".
 #' @section Warning:
-#' 
+#'
 #' It is assumed that each vector provides is sorted by \code{gapdata} within
 #' \code{id}. No checking is done, and so it is suggested that this only be
 #' used on ID columns within existing, validated \code{trip} objects.
 #' @seealso \code{\link{trip}}
 #' @keywords manip
 #' @examples
-#' 
-#' 
+#'
+#'
 #' id <- gl(2, 8)
 #' gd <- Sys.time() + 1:16
 #' gd[c(4:6, 12:16)] <- gd[c(4:6, 12:16)] + 10000
 #' sepIdGaps(id, gd, 1000)
-#'   
-#' 
+#'
+#'
 #' @export sepIdGaps
 sepIdGaps <- function(id, gapdata, minGap=3600 * 24 * 7) {
     toSep <- tapply(gapdata, id,
@@ -721,4 +483,474 @@ sepIdGaps <- function(id, gapdata, minGap=3600 * 24 * 7) {
     }
     unsplit(tripID, id)
 }
+
+
+## taken from package sp/src/gcdist.c
+
+##' @rdname trip-internal
+.distances <- function(x) {
+  proj <- is.projected(x)
+  if (is.na(proj)) proj <- FALSE
+
+
+  lapply(split(x, x[[getTORnames(x)[2]]]), function(x) trackDistance(coordinates(x), longlat = !proj))
+
+}
+
+##' @rdname trip-internal
+.gcdist.c <- function(lon1, lat1, lon2, lat2) {
+    DE2RA <- pi / 180
+    a <- 6378.137            # /* WGS-84 equatorial radius in km */
+    f <- 1.0 / 298.257223563 # /* WGS-84 ellipsoid flattening factor */
+    lat1R <- lat1 * DE2RA
+    lat2R <- lat2 * DE2RA
+    lon1R <- lon1 * DE2RA
+    lon2R <- lon2 * DE2RA
+    F <- ( lat1R + lat2R ) / 2.0
+    G <- ( lat1R - lat2R ) / 2.0
+    L <- ( lon1R - lon2R ) / 2.0
+    sinG2 <- sin( G ) ^ 2
+    cosG2 <- cos( G ) ^ 2
+    sinF2 <- sin( F ) ^ 2
+    cosF2 <- cos( F ) ^ 2
+    sinL2 <- sin( L ) ^ 2
+    cosL2 <- cos( L ) ^ 2
+    S <- sinG2 * cosL2 + cosF2 * sinL2
+    C <- cosG2 * cosL2 + sinF2 * sinL2
+    w <- atan( sqrt( S / C ) )
+    R <- sqrt( S * C ) / w
+    D <- 2 * w * a
+    H1 <- ( 3 * R - 1 ) / ( 2 * C )
+    H2 <- ( 3 * R + 2 ) / ( 2 * S )
+    dist <- D * ( 1 + f * H1 * sinF2 * cosG2 - f * H2 * cosF2 * sinG2 )
+    dist <- ifelse(abs(lat1 - lat2) < .Machine$double.eps, 0.0, dist)
+    dist <- ifelse(abs(lon1 - lon2) < .Machine$double.eps, 0.0, dist)
+    dist <- ifelse(abs((abs(lon1) + abs(lon2)) - 360.0) <
+                   .Machine$double.eps, 0.0, dist)
+    dist
+}
+
+##trackDistance <- function(x) UseMethod("trackDistance")
+
+
+#' Determine distances along a track
+#'
+#'
+#' Calculate the distances between subsequent 2-D coordinates using Euclidean
+#' or Great Circle distance (WGS84 ellipsoid) methods.
+#'
+#'
+#' If \code{x1} is a trip object, arguments \code{x2}, \code{x3}, \code{y2} are
+#' ignored and the return result has an extra element for the start point of
+#' each individual trip, with value 0.0.
+#'
+#' The \code{prev} argument is ignore unless x1 is a trip.
+#'
+#' Distance values are in the units of the input coordinate system when longlat
+#' is FALSE, and in kilometres when longlat is TRUE.
+#'
+#' This originally used \code{\link[sp]{spDistsN1}} but now implements the sp
+#' \code{gcdist} source directly in R.
+#'
+#' @aliases trackDistance trackDistance.default trackDistance.trip
+#' @param x1 trip object, matrix of 2-columns, with x/y coordinates OR a vector
+#' of x start coordinates
+#' @param x2 vector of x end coordinates, if x1 is not a matrix
+#' @param y1 vector of y start coordinates, if x1 is not a matrix
+#' @param y2 vector of y end coordinates, if x1 is not a matrix
+#' @param longlat if FALSE, Euclidean distance, if TRUE Great Circle distance
+#' @param prev if TRUE and x1 is a trip, the return value has a padded end
+#' value (\"prev\"ious), rather than start (\"next\")
+#' @return Vector of distances between coordinates.
+#' @references Original source taken from sp package.
+#' @author Roger Bivand and Michael Sumner
+#' @examples
+#'   ## Continuing the example from '?"trip-methods"':
+#' utils::example("trip-methods", package="trip",
+#'                ask=FALSE, echo=FALSE)
+#'
+#'  ## the method knows this is a trip, so there is a distance for every
+#'  ## point, including 0s as the start and at transitions between
+#'  ## individual trips
+#' trackDistance(tr)
+#'
+#' ## the default method does not know about the trips, so this is
+#' ##(n-1) distances between all points
+#' ## trackDistance(coordinates(tr), longlat = FALSE)
+#'
+#' ## we get NA at the start, end and at transitions between trips
+#'
+#'  \dontrun{
+#'  require(rgdal)
+#'  trackAngle(tr)
+#'  }
+#' @export trackDistance
+trackDistance <- function(x1, y1, x2, y2, longlat=TRUE, prev = FALSE) UseMethod("trackDistance")
+
+##' @export
+trackDistance.default <- function(x1, y1, x2, y2, longlat=TRUE, prev = FALSE) {
+    if (missing(y1)) {
+        if (!is.matrix(x1))
+            stop("x1 is not a matrix and multiple arguments not specified")
+        if (nrow(x1) < 2) stop("x1 has too few rows")
+        if (ncol(x1) < 2) stop("x1 has too few columns")
+        x2 <- x1[-1, 1]
+        y1 <- x1[-nrow(x1), 2]
+        y2 <- x1[-1, 2]
+        x1 <- x1[-nrow(x1), 1]
+    }
+    nx <- length(x1)
+    if (nx != length(y1) | nx != length(x2) | nx != length(y2))
+        stop("arguments must have equal lengths")
+    if (longlat) {
+        .gcdist.c(x1, y1, x2, y2)
+    } else sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+}
+
+##' @export
+trackDistance.trip <- function(x1, y1, x2, y2, longlat = TRUE, prev = FALSE) {
+    unlist(lapply(.distances(x1), function(x) if (prev) {c(x, 0)} else {c(0, x)}))
+}
+
+
+
+
+#' Determine internal angles along a track
+#'
+#'
+#' Calculate the angles between subsequent 2-D coordinates using Great Circle
+#' distance (spherical) methods.
+#'
+#' If \code{x} is a trip object, the return result has an extra element for the
+#' start and end point of each individual trip, with value NA.
+#'
+#' This is an optimized hybrid of "raster::bearing" and
+#' \code{\link[maptools]{gzAzimuth}}.
+#'
+#' @rdname trackAngle
+#' @param x trip object, or matrix of 2-columns, with x/y coordinates
+#' @return Vector of angles (degrees) between coordinates.
+#' @rdname trackAngle
+#' @export trackAngle
+trackAngle <- function(x) {
+  UseMethod("trackAngle")
+}
+
+#' @rdname trackAngle
+#' @method trackAngle trip
+#' @S3method trackAngle trip
+#' @export
+trackAngle.trip <- function(x) {
+  isproj <- is.projected(x)
+  if (is.na(isproj)) {
+    warning("object CRS is NA, assuming longlat")
+  } else {
+    if (isproj) {
+      x <- try(spTransform(x, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"))
+      if (inherits(x, "try-error")) {
+        stop("Object x is projected, attempts to transform to longlat failed. Is rgdal installed?")
+      }
+    }
+  }
+  st <- split(x, x[[getTORnames(x)[2]]])
+  unlist(lapply(st, function(x1) c(NA, trackAngle(coordinates(x1)), NA)))
+
+}
+
+#' @rdname trackAngle
+#' @method trackAngle default
+#' @S3method trackAngle default
+#' @export
+trackAngle.default <- function(x) {
+  n <- nrow(x)
+  ## MDSumner 2013-06-14 not sure what to expose here, will start with optimized gzAzimuth(abdali)/bearing() hybrid
+  ##if (type == "geosphere") {
+  ##  require(geosphere)
+  ##  angle <- bearing(xy[2:(n-1),],xy[3:n,]) - bearing(xy[2:(n-1),],xy[1:(n-2),])
+  ##} else {
+  ##  if(!type == "abdali") stop(sprintf("type '%s' not implemented", type))
+    angle <- .abdali(x[2:(n-1),],x[3:n,]) - .abdali(x[2:(n-1),],x[1:(n-2),])
+
+  ##}
+  angle <- (angle+180)%%360-180
+  abs(angle)
+}
+
+
+## "abdali", replacement for raster::bearing
+##' @rdname trip-internal
+.abdali <- function (p1, p2)
+{
+  stopifnot(nrow(p1) == nrow(p2))
+
+  toRad <- pi/180
+  p1 <- p1 * toRad
+  p2 <- p2 * toRad
+  keep <- !(.rowSums(p1 == p2, nrow(p1), ncol(p1)) == 2L)
+  res <- rep(as.numeric(NA), length = nrow(p1))
+  if (sum(keep) == 0) {
+    return(res)
+  }
+  p1 <- p1[keep, , drop = FALSE]
+  p2 <- p2[keep, , drop = FALSE]
+  dLon = p2[, 1] - p1[, 1]
+  y = sin(dLon)
+  x = cos(p1[, 2]) * tan(p2[, 2]) - sin(p1[, 2]) * cos(dLon)
+  azm = atan2(y, x)/toRad
+  res[keep] <- (azm + 360)%%360
+  return(res)
+}
+
+
+##n <- 10000;x <- cbind(runif(n, -180, 180), runif(n, -90, 90));
+
+##max(abs(trackAngle(x) - trackAngle(x, type = "abdali")))
+## [1] 1.136868e-13
+
+##library(rbenchmark)
+
+##n <- 5000;x <- cbind(runif(n, -180, 180), runif(n, -90, 90));
+
+##benchmark(trackAngle(x, type = "geosphere"), trackAngle(x, type = "abdali"), replications = 300)
+##test replications elapsed relative user.self sys.self user.child sys.child
+##2    trackAngle(x, type = "abdali")          300    1.62    1.000      1.62        0         NA        NA
+##1 trackAngle(x, type = "geosphere")          300    8.49    5.241      8.49        0         NA        NA
+
+
+## TODO:
+## tidier!
+##-----------------------------------------------------------------------------
+## there is a bug here if times are integer and constant (or something)
+## I think it has to do with boundary.lev creation, as subsequent trips are out of whack
+
+## this fails (but ok if tms is + 1:10)
+## d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + c(1:5, 1:5), id=gl(2, 5))
+## coordinates(d) <- ~x+y
+## tr <- trip(d, c("tms", "id"))
+
+## bound.dates <- seq(min(tr$tms)-1, max(tr$tms)+1, length=5)
+## trip.list <- trip.split.exact(tr, bound.dates)
+
+##' @importFrom maptools spRbind
+##' @rdname trip-internal
+.tripRbind <- function (obj, x) {
+    ## not needed, and not possible since classes imported using
+    ## NAMESPACE MDS 2012-10-09
+    ## suppressMessages(require(maptools))
+    tor1 <- getTORnames(obj)
+    tor2 <- getTORnames(x)
+    if (! identical(tor1, tor2)) stop("trips are not equivalent for rbind")
+    SP <- spRbind(as(obj, "SpatialPoints"), as(x, "SpatialPoints"))
+    df <- rbind(slot(obj, "data"), slot(x, "data"))
+    dupes <- duplicated(cbind(coordinates(SP), df))
+    x <- SpatialPointsDataFrame(SP, data=df)[!dupes, ]
+    trip(x, tor1)
+}
+
+##' @rdname trip-internal
+.single.trip.split <- function(tr1, boundary.dates) {
+    diff.d <- diff(unclass(boundary.dates))
+    if (any(diff.d < 0))
+        stop("boundary dates must must sort increasingly")
+    if (any(!diff.d > 0))
+        stop("duplicates in boundary dates")
+    tor <- getTORnames(tr1)
+    ## single id trip object
+    x <- tr1[, tor]
+    x <- data.frame(coordinates(x), x@data[,tor])
+    if (min(boundary.dates) > min(x[, 3]))
+        stop("boundary dates do not encompass trip range (MIN)")
+    if (max(boundary.dates) < max(x[, 3]))
+        stop("boundary dates do not encompass trip range (MAX)")
+    which.dates <- boundary.dates[boundary.dates > min(x[, 3]) &
+                                  boundary.dates < max(x[, 3])]
+    which.dates <- rep(which.dates, each=2)
+    if (!length(which.dates) > 0) {
+        ## we are done
+        tr1$boundary.lev <- 1
+        res <- list(tr1)
+        ind <- which.min(boundary.dates < min(x[, 3]) )
+        boundary.names <- paste(boundary.dates[c(ind - 1, ind)],
+                                collapse=" <-> ")
+        names(res) <- boundary.names
+        return(res)
+    }
+    boundary.ids <- which(boundary.dates > min(x[, 3]) &
+                          boundary.dates < max(x[, 3]))
+    boundary.ids <- c(boundary.ids[1] - 1, boundary.ids,
+                      boundary.ids[length(boundary.ids)] + 1)
+    boundary.names <- paste(boundary.dates[boundary.ids[-length(boundary.ids)]],
+                            boundary.dates[boundary.ids[-1]], sep=" <-> ")
+    fx <- approxfun(x[, 3], x[, 1])
+    fy <- approxfun(x[, 3], x[, 2])
+    new.x <- fx(which.dates)
+    new.y <- fy(which.dates)
+    new.1 <- data.frame(new.x, new.y, which.dates,
+                        rep(x[1, 4], length(which.dates)))
+    names(new.1) <- names(x)
+    x.new <- rbind(x, new.1)
+    ## sort records
+    x.new <- x.new[order(x.new[, 3]), ]
+    edges <- which(x.new[, 3] %in% which.dates)
+    ## boundary.lev
+    boundary.lev <- cumsum(x.new[, 3] %in% which.dates)
+    boundary.lev[boundary.lev %% 2 > 0] <-
+        boundary.lev[boundary.lev %% 2 > 0] - 1
+    x.new$boundary.lev <- unclass(factor(boundary.lev))
+    t.list <- split(x.new, x.new$boundary.lev)
+    if (!length(t.list) == length(boundary.names))
+        stop("names and split do not match")
+    names(t.list) <- boundary.names
+    ## deal with trips that are too short
+    for (i in 1:length(t.list)) {
+        if (nrow(t.list[[i]]) < 2)
+            stop("this should never happen")
+        if (nrow(t.list[[i]]) < 3) {
+            x <- t.list[[i]]
+            fx <- approxfun(x[, 3], x[, 1])
+            fy <- approxfun(x[, 3], x[, 2])
+            which.dates <- seq(min(x[, 3]), max(x[, 3]), length=3)
+            x1 <- data.frame(fx(which.dates), fy(which.dates),
+                             which.dates, rep(x[1, 4], 3), rep(x[1, 5], 3))
+            names(x1) <- names(x)
+            t.list[[i]] <- x1
+        }
+    }
+    res <- lapply(t.list, function(x) {
+        SpatialPointsDataFrame(as.matrix(x[, 1:2]),
+                               x[, -c(1, 2)],
+                               proj4string=CRS(proj4string(tr1)))
+    })
+                                        #browser()
+    lapply(res, trip, tor)
+}
+
+
+
+
+#'
+#' Split trip events into exact time-based boundaries.
+#'
+#'
+#' Split trip events within a single object into exact time boundaries, adding
+#' interpolated coordinats as required.
+#'
+#'
+#' Motion between boundaries is assumed linear and extra coordinates are added
+#' at the cut points.
+#'
+#' @param x A trip object.
+#' @param dates A vector of date-time boundaries. These must encompass all the
+#' time range of the entire trip object.
+#' @param \dots Unused arguments.
+#' @return
+#'
+#' A list of trip objects, named by the time boundary in which they lie.
+#' @author Michael D. Sumner and Sebastian Luque
+#' @seealso See also \code{\link{tripGrid}}.
+#' @keywords manip chron
+#' @examples
+#'
+#' \dontrun{
+#' set.seed(66)
+#' d <- data.frame(x=1:100, y=rnorm(100, 1, 10),
+#'                 tms=Sys.time() + c(seq(10, 1000, length=50),
+#'                 seq(100, 1500, length=50)), id=gl(2, 50))
+#' coordinates(d) <- ~x+y
+#' tr <- trip(d, c("tms", "id"))
+#'
+#' bound.dates <- seq(min(tr$tms) - 1, max(tr$tms) + 1, length=5)
+#' trip.list <- cut(tr, bound.dates)
+#' bb <- bbox(tr)
+#' cn <- c(20, 8)
+#' g <- GridTopology(bb[, 1], apply(bb, 1, diff) / (cn - 1), cn)
+#'
+#' tg <- tripGrid(tr, grid=g)
+#' tg <- as.image.SpatialGridDataFrame(tg)
+#' tg$x <- tg$x - diff(tg$x[1:2]) / 2
+#' tg$y <- tg$y - diff(tg$y[1:2]) / 2
+#'
+#' op <- par(mfcol=c(4, 1))
+#' for (i in 1:length(trip.list)) {
+#'   plot(coordinates(tr), pch=16, cex=0.7)
+#'   title(names(trip.list)[i], cex.main=0.9)
+#'   lines(trip.list[[i]])
+#'   abline(h=tg$y, v=tg$x, col="grey")
+#'   image(tripGrid(trip.list[[i]], grid=g), interpolate=FALSE,
+#'   col=c("white", grey(seq(0.2, 0.7,  length=256))),add=TRUE)
+#'   abline(h=tg$y, v=tg$x,  col="grey")
+#'   lines(trip.list[[i]])
+#'   points(trip.list[[i]], pch=16, cex=0.7)
+#' }
+#'
+#' par(op)
+#' print("you may need to resize the window to see the grid data")
+#'
+#' cn <- c(200, 80)
+#' g <- GridTopology(bb[, 1], apply(bb, 1, diff) / (cn - 1), cn)
+#'
+#' tg <- tripGrid(tr, grid=g)
+#' tg <- as.image.SpatialGridDataFrame(tg)
+#' tg$x <- tg$x - diff(tg$x[1:2]) / 2
+#' tg$y <- tg$y - diff(tg$y[1:2]) / 2
+#'
+#' op <- par(mfcol=c(4, 1))
+#' for (i in 1:length(trip.list)) {
+#'   plot(coordinates(tr), pch=16, cex=0.7)
+#'   title(names(trip.list)[i], cex.main=0.9)
+#'   image(tripGrid(trip.list[[i]], grid=g, method="density", sigma=1),
+#'         interpolate=FALSE,
+#'         col=c("white", grey(seq(0.2, 0.7, length=256))),
+#'         add=TRUE)
+#'   lines(trip.list[[i]])
+#'   points(trip.list[[i]], pch=16, cex=0.7)
+#' }
+#'
+#' par(op)
+#' print("you may need to resize the window to see the grid data")
+#'
+#' }
+#'
+#' @method cut trip
+#' @S3method cut trip
+#' @export cut.trip
+cut.trip <- function(x, dates, ...) {
+    tor <- getTORnames(x)
+    ids <- unique(x[[tor[2]]])
+    all.list <- vector("list", length(ids))
+    names(all.list) <- ids
+    for (id in ids) {
+        x1 <- x[x[[tor[2]]] == id, ]
+        all.list[[id]] <- .single.trip.split(x1, dates)
+    }
+    all.names <- unique(unlist(lapply(all.list, names)))
+    ord <- order(as.POSIXct(all.names))
+    all.names <- all.names[ord]
+    res.list <- vector("list", length(all.names))
+    names(res.list) <- all.names
+    for (i in 1:length(all.names)) {
+        this.name <- all.names[i]
+        this.res <- list()
+        for (j in 1:length(all.list)) {
+            matches <- match(this.name,  names(all.list[[j]]))
+            if (!is.na(matches)) {
+                this.res <- c(this.res, all.list[[j]][[this.name]])
+            }
+        }
+        res.list[[this.name]] <- this.res
+    }
+    nlist <- vector("list", length(res.list))
+    names(nlist) <- names(res.list)
+    for (i in 1:length(res.list)) {
+        nlist[[i]] <- res.list[[i]][[1]]
+        if (length(res.list[[i]]) > 1) {
+            for (j in 2:length(res.list[[i]])) {
+                nlist[[i]] <- .tripRbind(nlist[[i]],
+                                                res.list[[i]][[j]])
+            }
+        }
+    }
+    nlist
+}
+
 
