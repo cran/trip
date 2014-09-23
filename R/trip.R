@@ -1,12 +1,4 @@
 
-###_ + Functions
-
-## Need to clean up the "internal" functions, and ensure the arguments
-## are passed in correctly - and figure out which arguments are really
-## useful anyway
-
-
-
 #' Function to ensure dates and times are in order with trip ID
 #'
 #'
@@ -68,12 +60,12 @@ interpequal <- function(x, dur=NULL, quiet=FALSE) {
   x <- coords[,1]
   y <- coords[,2]
   levs <- levels(id)
-  newPts <- NULL
+  newPts <- vector("list", length(levs))
   ##if (is.null(dur))
   ##   dur <- as.numeric(min(unlist(tapply(as.integer(time),
   ##            id, diff))))
-  for (sub in levs) {
-    ind <- id == sub
+  for (isub in seq_along(levs)) {
+    ind <- id == levs[isub]
     xx <- x[ind]
     yy <- y[ind]
     tms <- time[ind]
@@ -87,10 +79,12 @@ interpequal <- function(x, dur=NULL, quiet=FALSE) {
     nx <- unlist(apply(ax, 1, .intpFun))
     ny <- unlist(apply(ay, 1, .intpFun))
     nt <- unlist(apply(at, 1, .intpFun)) + min(tms)
-    ni <- factor(rep(sub, length=length(nt)))
-    newPts <- rbind(newPts,
-                    data.frame(x=nx, y=ny, time=nt, id=ni))
+    ni <- factor(rep(levs[isub], length=length(nt)))
+##    newPts <- rbind(newPts,
+    newPts[[isub]] <- data.frame(x=nx, y=ny, time=nt, id=ni)
   }
+  newPts <- do.call("rbind", newPts)
+
   origTotal <- sum(tapply(time, id, function(x) {
     diff(range(as.numeric(x)))
   }))
@@ -638,7 +632,7 @@ trackAngle <- function(x) {
 
 #' @rdname trackAngle
 #' @method trackAngle trip
-#' @S3method trackAngle trip
+
 #' @export
 trackAngle.trip <- function(x) {
   isproj <- is.projected(x)
@@ -659,7 +653,6 @@ trackAngle.trip <- function(x) {
 
 #' @rdname trackAngle
 #' @method trackAngle default
-#' @S3method trackAngle default
 #' @export
 trackAngle.default <- function(x) {
   n <- nrow(x)
@@ -833,15 +826,17 @@ trackAngle.default <- function(x) {
 #'
 #'
 #' Split trip events within a single object into exact time boundaries, adding
-#' interpolated coordinats as required.
+#' interpolated coordinates as required.
 #'
 #'
 #' Motion between boundaries is assumed linear and extra coordinates are added
 #' at the cut points.
 #'
 #' @param x A trip object.
-#' @param dates A vector of date-time boundaries. These must encompass all the
-#' time range of the entire trip object.
+#' @param dates A character string such as the \code{breaks} argument
+#' for \code{\link{cut.POSIXt}}, or alternatively a vector of
+#' date-time boundaries. (If the latter hese must encompass all the time range of
+#' the entire trip object.)
 #' @param \dots Unused arguments.
 #' @return
 #'
@@ -854,10 +849,12 @@ trackAngle.default <- function(x) {
 #' \dontrun{
 #' set.seed(66)
 #' d <- data.frame(x=1:100, y=rnorm(100, 1, 10),
-#'                 tms=Sys.time() + c(seq(10, 1000, length=50),
+#'                 tms= as.POSIXct(as.character(Sys.time()), tz = "GMT") + c(seq(10, 1000, length=50),
 #'                 seq(100, 1500, length=50)), id=gl(2, 50))
 #' coordinates(d) <- ~x+y
 #' tr <- trip(d, c("tms", "id"))
+#'
+#' cut(tr, "200 sec")
 #'
 #' bound.dates <- seq(min(tr$tms) - 1, max(tr$tms) + 1, length=5)
 #' trip.list <- cut(tr, bound.dates)
@@ -912,10 +909,18 @@ trackAngle.default <- function(x) {
 #' }
 #'
 #' @method cut trip
-#' @S3method cut trip
-#' @export cut.trip
-cut.trip <- function(x, dates, ...) {
+#' @export
+cut.trip <-
+function (x, dates, ...)
+{
     tor <- getTORnames(x)
+    if (is.character(dates)) {
+        if (length(dates) > 1) stop("if dates is character, length(dates) should be 1L")
+        levs <- levels(cut(x[[tor[1]]], dates))
+        datebounds <- seq(as.POSIXct(levs[1L], tz = "GMT"), by = dates, length = length(levs) + 1)
+    }
+
+    dates <- datebounds
     ids <- unique(x[[tor[2]]])
     all.list <- vector("list", length(ids))
     names(all.list) <- ids
@@ -932,7 +937,7 @@ cut.trip <- function(x, dates, ...) {
         this.name <- all.names[i]
         this.res <- list()
         for (j in 1:length(all.list)) {
-            matches <- match(this.name,  names(all.list[[j]]))
+            matches <- match(this.name, names(all.list[[j]]))
             if (!is.na(matches)) {
                 this.res <- c(this.res, all.list[[j]][[this.name]])
             }
@@ -945,12 +950,12 @@ cut.trip <- function(x, dates, ...) {
         nlist[[i]] <- res.list[[i]][[1]]
         if (length(res.list[[i]]) > 1) {
             for (j in 2:length(res.list[[i]])) {
-                nlist[[i]] <- .tripRbind(nlist[[i]],
-                                                res.list[[i]][[j]])
+                nlist[[i]] <- .tripRbind(nlist[[i]], res.list[[i]][[j]])
             }
         }
     }
     nlist
 }
+
 
 
