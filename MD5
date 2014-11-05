@@ -1,7 +1,7 @@
-d47ce5940c6cc59577a241e108df0d80 *ChangeLog
-51338501fa6313647442cd350448a90d *DESCRIPTION
+3dc29919e31a95699964204dcc92ece1 *ChangeLog
+4c48d10aa384f8a43873c5b10c25baad *DESCRIPTION
 1c181b59d794955368166d947b3980d6 *NAMESPACE
-0b3aa809273d2621a599d9a31c3f314c *NEWS
+d182bad5119bbad2a94d937a57a2d670 *NEWS
 266b49dcf80e021c7656f1547d999d9d *R/AllClass.R
 548e5337d863d460441705f0c1693a01 *R/AllMethod.R
 ae3f5026cd3e3471221dc8bb9cec813b *R/as.trip.R
@@ -12,12 +12,12 @@ c48b02205268027d215aac78b2af7512 *R/colours.R
 7c46f25fd5a3744d00bc5c241abcdde3 *R/interpequal.R
 8e1d44936071ccd4bde07e52fedd75b3 *R/speedDistanceAngle.R
 860a7be56e724606a3a55a45582779d4 *R/trip-deprecated.R
-fc85365d432e19d79d5f7d7e5a7d75a7 *R/trip.R
-918096e7d077a4f668e5c8ace6eb8365 *README.md
-a727911ede3f22798bebbd9cf993f4ca *build/vignette.rds
+5db9efe8550fa1111b31192c0ad2b02f *R/trip.R
+45e5f7dc36a741d54e01464648bcdcb9 *README.md
+9c1c3a2483778a72ea87b6c8d5f69bb2 *build/vignette.rds
 7f0bb769639c05f360a92bb77c09b5da *inst/doc/trip.R
 f2311fb7ba7ddbab0f6e524d602eaf3e *inst/doc/trip.Rnw
-fd95e20e2ed39a41d24e0b4ecb4d5dbf *inst/doc/trip.pdf
+b3ea14a6708d392eebfc13d2fddc05e2 *inst/doc/trip.pdf
 cecec1665c7f566dc8c8695a0763ef71 *man/TimeOrderedRecords-class.Rd
 8a7e0042a1ca76088265bdd544b9b677 *man/TimeOrderedRecords.Rd
 7a55ed4415b21954455e6909a0ed0a08 *man/adjust.duplicateTimes.Rd
