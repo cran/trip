@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Introduction</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Introduction</h1>
+
+<p>Basic use of the trip package.</p>
+
+<h2>Data input and validation</h2>
+
+<pre><code class="r">library(trip)
+</code></pre>
+
+<pre><code>## Loading required package: sp
+</code></pre>
+
+<pre><code class="r">d &lt;- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
+coordinates(d) &lt;- ~x+y
+## a projection should always be set, is it WGS84 or NAD83 . . .
+proj4string(d) &lt;- CRS(&quot;+proj=laea +ellps=sphere&quot;)
+tr &lt;- trip(d, c(&quot;tms&quot;, &quot;id&quot;))
+summary(tr)
+</code></pre>
+
+<pre><code>## 
+## Object of class trip
+##   tripID (&quot;id&quot;) No.Records   startTime (&quot;tms&quot;)     endTime (&quot;tms&quot;)
+## 1             1          5 2015-05-20 21:44:02 2015-05-20 21:44:06
+## 2             2          5 2015-05-20 21:44:07 2015-05-20 21:44:11
+##   tripDuration tripDistance meanSpeed  maxSpeed meanRMSspeed maxRMSspeed
+## 1       4 secs     5.952738  5357.464  7246.576     1301.295    5205.180
+## 2       4 secs     6.835383  6151.845 11650.035     1831.194    7324.777
+## 
+## Total trip duration: 8 seconds (0 hours, 8 seconds)
+## 
+## Derived from Spatial data:
+## 
+## Object of class SpatialPointsDataFrame
+## Coordinates:
+##       min       max
+## x  1.0000 10.000000
+## y -1.6838  1.397778
+## Is projected: TRUE 
+## proj4string : [+proj=laea +ellps=sphere]
+## Number of points: 10
+## Data attributes:
+##       tms                      id   
+##  Min.   :2015-05-21 07:44:02   1:5  
+##  1st Qu.:2015-05-21 07:44:04   2:5  
+##  Median :2015-05-21 07:44:06        
+##  Mean   :2015-05-21 07:44:06        
+##  3rd Qu.:2015-05-21 07:44:08        
+##  Max.   :2015-05-21 07:44:11
+</code></pre>
+
+<h1>Simple plotting</h1>
+
+<pre><code class="r">plot(tr)
+lines(tr)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-2"/> </p>
+
+<p>Plot of a very simple trip object.</p>
+
+<h1>Gridding for time spent</h1>
+
+<pre><code class="r">tg &lt;- rasterize(tr)
+plot(tg, col = c(&quot;transparent&quot;, heat.colors(25)))
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-3"/> </p>
+
+<p>Plot of a rasterized version of the trip, by default this is a map of <strong>time-spent</strong>. </p>
+
+<h1>Example data from diveMove</h1>
+
+<pre><code class="r">##library(diveMove)
+fname &lt;- system.file(file.path(&quot;data&quot;, &quot;sealLocs.csv&quot;),
+                       package=&quot;diveMove&quot;)
+if (file.exists(fname)) {
+    dat &lt;- read.table(fname, sep=&quot;;&quot;, header = TRUE, stringsAsFactors = FALSE)
+    dat$class &lt;- ordered(dat$class, c(&quot;Z&quot;, &quot;B&quot;, &quot;A&quot;, &quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;))
+    dat$time &lt;- as.POSIXct(strptime(dat$time, &quot;%Y-%m-%d %H:%M:%S&quot;), tz = &quot;GMT&quot;)
+}
+
+dat1 &lt;- subset(dat, !is.na(dat$lon))
+coordinates(dat1) &lt;- c(&quot;lon&quot;, &quot;lat&quot;)
+sl &lt;- trip(dat1, c(&quot;time&quot;, &quot;id&quot;))
+
+## merge with data from argosfilter
+#library(argosfilter)
+#data(seal)
+##seal$id &lt;- &quot;ringy2&quot;
+##seal[[&quot;time&quot;]] &lt;- seal$dtime
+##seal$dtime &lt;- NULL
+## reconstruct the Argos labels
+##seal[[&quot;class&quot;]] &lt;- ordered(levels(dat$class)[factor(seal$lc, sort(unique(seal$lc)))], levels(dat$class))
+##seal$lc &lt;- NULL
+
+
+## also adehabitatLT, crawl
+
+## what are we supposed to do with duplicated times?
+##  which(!diff(seal$time) &gt; 0)
+##[1]   17  116  122 1008 1158 1231 1293 1300
+##plot(seal[which(!diff(seal$time) &gt; 0),c(&quot;lon&quot;, &quot;lat&quot;) ])
+##points(seal[1 + which(!diff(seal$time) &gt; 0),c(&quot;lon&quot;, &quot;lat&quot;) ], col = &quot;red&quot;)
+
+##seal &lt;- seal[!duplicated(seal$time), ]
+
+## drop missing data and combine
+##dat &lt;- rbind(dat[!is.na(dat$lon), ], seal[,names(dat)])
+##coordinates(dat) &lt;- c(&quot;lon&quot;, &quot;lat&quot;)
+##proj4string(dat) &lt;- CRS(&quot;+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0&quot;)
+
+##tr &lt;- trip(dat, c(&quot;time&quot;, &quot;id&quot;))
+</code></pre>
+
+</body>
+
+</html>

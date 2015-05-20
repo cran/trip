@@ -30,7 +30,7 @@ setAs("trip", "SpatialLinesDataFrame", function(from) {
 
 
 setAs("trip", "ltraj", function(from) {
-  if(!require(adehabitatLT)) stop("adhabitatLT not available")
+  if(!requireNamespace("adehabitatLT")) stop("adhabitatLT not available")
   tor <- getTORnames(from)
   crds <- coordinates(from)
   adehabitatLT::as.ltraj(as.data.frame(crds), date=from[[tor[1]]],
@@ -91,6 +91,7 @@ as.psp.trip <- function(x, ..., from, to) {
   do.call("superimpose", lapply(split.X, as.psp.trip1, ow=ow))
 }
 setAs("trip", "psp", function(from) as.psp.trip(from))
+
 
 
 #' Break a trip into its component line segments

@@ -267,10 +267,10 @@ argos.sigma <- function(x, sigma=c(100, 80, 50, 20, 10, 4,  2),
 #' general manipulation of this type.
 #' @references
 #'
-#' The Argos data documentation is at
-#' \url{http://www.argos-system.org/manual/}.  Specific details on the PRV
-#' ("provide data") format were found here
-#' \url{http://www.cls.fr/manuel/html/chap4/chap4_4_8.htm}.
+#' The Argos data documentation was (ca. 2003) at
+#' http://www.argos-system.org/manual.  Specific details on the PRV
+#' ("provide data") format were found in Chapter 4_4_8, originally at 
+#' 'http://www.cls.fr/manuel/html/chap4/chap4_4_8.htm'.
 #' @keywords IO manip
 #' @export readArgos
 readArgos <- function (x, correct.all=TRUE, dtFormat="%Y-%m-%d %H:%M:%S",
@@ -832,7 +832,7 @@ trackAngle.default <- function(x) {
 #' at the cut points.
 #'
 #' @param x A trip object.
-#' @param dates A character string such as the \code{breaks} argument
+#' @param breaks A character string such as the \code{breaks} argument
 #' for \code{\link{cut.POSIXt}}, or alternatively a vector of
 #' date-time boundaries. (If the latter hese must encompass all the time range of
 #' the entire trip object.)
@@ -841,6 +841,7 @@ trackAngle.default <- function(x) {
 #'
 #' A list of trip objects, named by the time boundary in which they lie.
 #' @author Michael D. Sumner and Sebastian Luque
+#' @details This function was completely rewritten in version 1.1-20. 
 #' @seealso See also \code{\link{tripGrid}}.
 #' @keywords manip chron
 #' @examples
@@ -910,51 +911,57 @@ trackAngle.default <- function(x) {
 #' @method cut trip
 #' @export
 cut.trip <-
-function (x, dates, ...)
+function (x, breaks, ...)
 {
-    tor <- getTORnames(x)
-    if (is.character(dates)) {
-        if (length(dates) > 1) stop("if dates is character, length(dates) should be 1L")
-        levs <- levels(cut(x[[tor[1]]], dates))
-        datebounds <- seq(as.POSIXct(levs[1L], tz = "GMT"), by = dates, length = length(levs) + 1)
+    if ("dates" %in% names(list(...))) warning("please use \'breaks\' not \'dates\'")
+  tor <- getTORnames(x)
+    if (is.character(breaks)) {
+        if (length(breaks) > 1) stop("if breaks is character, length(breaks) should be 1L")
+        levs <- levels(cut(x[[tor[1]]], breaks))
+        datebounds <- seq(as.POSIXct(levs[1L], tz = "GMT"), by = breaks, length = length(levs) + 1)
+        breaks <- datebounds
     }
-
-    dates <- datebounds
-    ids <- unique(x[[tor[2]]])
-    all.list <- vector("list", length(ids))
-    names(all.list) <- ids
-    for (id in ids) {
-        x1 <- x[x[[tor[2]]] == id, ]
-        all.list[[id]] <- .single.trip.split(x1, dates)
+    
+   
+      uid <- unique(x[[tor[2]]])
+      l <- vector("list", length(uid))
+      for (i in seq_along(l)) l[[i]] <- cut.one.trip(x[x[[tor[2]]] == uid[i], ], breaks)
+      l2 <- vector("list", length(l[[1]]))
+      for (j in seq_along(l2)) l2[[j]] <- do.call(rbind, lapply(l, function(x) x[[j]]) )
+      lapply(l2[!sapply(l2, is.null)], function(xx) trip(SpatialPointsDataFrame(SpatialPoints(as.matrix(xx[,1:2]), proj4string = CRS(proj4string(x))), xx[,-c(1, 2)]), c("time", "id")))
+      
     }
-    all.names <- unique(unlist(lapply(all.list, names)))
-    ord <- order(as.POSIXct(all.names))
-    all.names <- all.names[ord]
-    res.list <- vector("list", length(all.names))
-    names(res.list) <- all.names
-    for (i in 1:length(all.names)) {
-        this.name <- all.names[i]
-        this.res <- list()
-        for (j in 1:length(all.list)) {
-            matches <- match(this.name, names(all.list[[j]]))
-            if (!is.na(matches)) {
-                this.res <- c(this.res, all.list[[j]][[this.name]])
-            }
-        }
-        res.list[[this.name]] <- this.res
+    
+    
+    
+
+    cut.one.trip <- function(x, breaks, ...) {
+      tor <- getTORnames(x)
+      coords <- coordinates(x)
+      time <- x[[tor[1]]]
+      id <- x[[tor[2]]]
+      unbrks <- as.numeric(breaks)
+      untime <- as.numeric(time)
+      no_insert <- unbrks %in% untime
+      unbrks2 <- unbrks[!no_insert]
+      newbreaks <- sort(c(unbrks[-c(1, length(unbrks))], unbrks2[-c(1, length(unbrks2))], untime))
+      newx <- approxfun(untime, coords[,1], rule = 2)(newbreaks)
+      newy <- approxfun(untime, coords[,2], rule = 2)(newbreaks)
+      
+      ntrack <- list(x = newx, y = newy, time = ISOdatetime(1970, 1, 1, 0, 0, 0, tz = "UTC") + newbreaks, 
+                     id = rep(id[1], length = length(newx)))
+      
+      out <- split(as.data.frame(ntrack), cumsum(duplicated(newbreaks)))
+      short <- sapply(out, nrow) < 3
+      out <- lapply(out, function(x) if (nrow(x) < 3) NULL else x)
+      
+      for (i in seq_along(out)[-1]) {
+        if (short[i] & !short[i-1]) last <- tail(out[[i-1]], 1)
+        if (!short[i] & short[i-1] & exists("last")) out[[i]][1,] <- last
+      }
+      out
     }
-    nlist <- vector("list", length(res.list))
-    names(nlist) <- names(res.list)
-    for (i in 1:length(res.list)) {
-        nlist[[i]] <- res.list[[i]][[1]]
-        if (length(res.list[[i]]) > 1) {
-            for (j in 2:length(res.list[[i]])) {
-                nlist[[i]] <- .tripRbind(nlist[[i]], res.list[[i]][[j]])
-            }
-        }
-    }
-    nlist
-}
+    
+    
 
-
-
+    
