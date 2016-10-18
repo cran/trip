@@ -160,7 +160,7 @@ adjust.duplicateTimes <- function (time, id) {
 #'
 #' Assign numeric values for Argos "class" by matching the levels available to
 #' given numbers. An adjustment is made to allow sigma to be specified in
-#' kilometeres, and the values returned are the approximate values for longlat
+#' kilometres, and the values returned are the approximate values for longlat
 #' degrees.  It is assumed that the levels are part of an "ordered" factor from
 #' least precise to most precise.
 #'
@@ -190,9 +190,9 @@ adjust.duplicateTimes <- function (time, id) {
 #' @export argos.sigma
 argos.sigma <- function(x, sigma=c(100, 80, 50, 20, 10, 4,  2),
                         adjust=111.12) {
-    sigma <- sigma / adjust
+    sigma <- sigma 
     names(sigma) <- levels(x)
-    sigma[x]
+    sigma[x]/adjust  ## vectorize on x
 }
 
 
@@ -954,10 +954,10 @@ function (x, breaks, ...)
       out <- split(as.data.frame(ntrack), cumsum(duplicated(newbreaks)))
       short <- sapply(out, nrow) < 3
       out <- lapply(out, function(x) if (nrow(x) < 3) NULL else x)
-      
+      last <- NULL ## woh fix for bitten by dplyr adding a last() function
       for (i in seq_along(out)[-1]) {
         if (short[i] & !short[i-1]) last <- tail(out[[i-1]], 1)
-        if (!short[i] & short[i-1] & exists("last")) out[[i]][1,] <- last
+        if (!short[i] & short[i-1] & !is.null(last)) out[[i]][1,] <- last
       }
       out
     }

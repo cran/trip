@@ -5,7 +5,7 @@
 #' is unrealistic.
 #' 
 #' 
-#' Using an algorithm (McConnnell et al, 1992), points are tested for speed
+#' Using an algorithm (McConnnell et al., 1992), points are tested for speed
 #' between previous / next and 2nd previous / next points.  Contiguous sections
 #' with an root mean square speed above a given maximum have their highest rms
 #' point removed, then rms is recalculated, until all points are below the
@@ -13,7 +13,7 @@
 #' can be specified by the user.
 #' 
 #' If the coordinates of the \code{trip} data are not projected, or NA the
-#' distance calculation assumeds longlat and kilometres (great circle). For
+#' distance calculation assumes longlat and kilometres (great circle). For
 #' projected coordinates the speed must match the units of the coordinate
 #' system.  (The PROJ.4 argument "units=km" is suggested).
 #' 
@@ -31,9 +31,9 @@
 #' the development of this version.
 #' @section Warning:
 #' 
-#' This algorithm is not considered to be particularly relevant to the problems
-#' involved with location uncertainty in animal tracking.  It is provided
-#' merely as an illustrative benchmark for further work.
+#' This algorithm is destructive, and provides little information about
+#' location uncertainty.  It is provided because it's commonly used
+#' and provides an illustrative benchmark for further work. 
 #' 
 #' It is possible for the filter to become stuck in an infinite loop, depending
 #' on the function passed to the filter.  Several minutes is probably too long

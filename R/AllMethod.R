@@ -9,13 +9,16 @@
 #' @name trip-methods
 #' @aliases trip-methods trip trip,SpatialPointsDataFrame,ANY-method
 #' trip,ANY,TimeOrderedRecords-method trip,trip,ANY-method
-#' trip,trip,TimeOrderedRecords-method [,trip-method [,trip,ANY,ANY,ANY-method [[<-,trip,ANY,missing-method
+#' trip,trip,TimeOrderedRecords-method [,trip-method [,trip,ANY,ANY,ANY-method 
+#' [[<-,trip,ANY,missing-method trip<-,data.frame,character-method
 #' @param obj A \code{\link[sp]{SpatialPointsDataFrame}}, or an object that can
 #' be coerced to one, containing at least two columns with the DateTime and ID
 #' data as per \code{TORnames}.  It can also be a \code{trip} object for
 #' redefining \code{TORnames}.
 #' @param TORnames Either a \code{TimeOrderedRecords} object, or a 2-element
 #' character vector specifying the DateTime and ID column of \code{obj}
+#' @param value A 4-element character vector specifying the X, Y, DateTime coordinates 
+#' and ID of \code{obj}. 
 #' @return
 #'
 #' A trip object, with the usual slots of a
@@ -45,7 +48,7 @@
 #' }
 #' @seealso
 #'
-#' \code{\link{speedfilter}}, and \code{\link{tripGrid}} for simple(istic)
+#' \code{\link{speedfilter}}, and \code{\link{tripGrid}} for simplistic
 #' speed filtering and spatial time spent gridding.
 #' @export
 #' @examples
@@ -183,6 +186,8 @@ TimeOrderedRecords <- function(x) {
 #'
 NULL
 
+setOldClass("data.frame")
+
 #' @rdname trip-accessors
 #' @export
 getTORnames <- function(obj) obj@TOR.columns
@@ -215,6 +220,22 @@ setMethod("trip", signature(obj="trip", TORnames="ANY"),
           function(obj, TORnames) {
               trip(as(obj, "SpatialPointsDataFrame"), TORnames)
           })
+
+triprepmethod <-   function(obj, value) {
+  coordinates(obj) <- value[1:2]
+  trip(obj, value[3:4])
+}
+
+#' @rdname trip-methods
+#' @export
+setGeneric("trip<-",
+           function(obj, value) standardGeneric("trip<-"))
+
+
+setReplaceMethod("trip", 
+                 signature(obj = "data.frame", value = "character"), 
+                 triprepmethod
+               )
 
 setReplaceMethod("[[",
                  signature(x="trip", i="ANY", j="missing", value="ANY"),
@@ -529,22 +550,5 @@ setMethod("spTransform", signature("trip", "CRS"),
             pts <- spTransform(as(x, "SpatialPointsDataFrame"),
                                CRSobj, ...)
             trip(pts, getTORnames(x))
-          })
-
-## method to allow transformation with character only
-setMethod("spTransform", signature("Spatial", "character"), 
-          function(x, CRSobj, ...) {
-            
-            .local <- function (object, pstring, ...) 
-            {
-              crs <- try(CRS(pstring))
-              if (inherits(crs, "try-error")) { stop(sprintf("cannot determine valid CRS from %s", pstring))
-              } else {
-                spTransform(x, crs)
-              }
-            }
-            
-            .local(x, pstring = CRSobj, ...)
-            
           })
 

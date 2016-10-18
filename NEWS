@@ -1,3 +1,23 @@
+   CHANGES IN trip VERSION 1.5.0
+
+o removed a problematic warning
+
+o new data set walrus818, courtesy of Anthony Fischbach
+
+o new function homedist
+
+o added imports for recommended package functions
+
+o new trip<- replace method for one-step trip creation
+
+o removed character method for spTransform, now standard in rgdal/sp
+
+   BUG FIXES 
+   
+o fix for last namespace clash with dplyr in cut.trip
+
+o argos.sigma was not vectorized on adjust for argment x, fixed
+
   CHANGES IN trip VERSION 1.1-21
   
 o modified PROJ.4 string in vignette for CRAN

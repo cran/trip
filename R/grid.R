@@ -78,7 +78,8 @@ setMethod("rasterize", signature(x = "trip", y = "RasterLayer"),
 #' 
 #' 
 #' Zero-length lines cannot be summed directly, their time value is summed by
-#' assuming the line is a point. A warning is given. The density method returns
+#' assuming the line is a point. A warning used to be given, but as it achieved
+#' nothing but create confusion it has been removed. The density method returns
 #' proportionate values, not summed time durations.
 #' 
 #' See \code{pixellate.psp} and \code{pixellate.ppp} for the details on the
@@ -171,19 +172,19 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
         }
         res$z <- res$z + t(v)
     }
-    if (zero.lengths) {
-        msg <- paste("zero length lines present, time durations binned",
-                     "into zero length lines present, time durations",
-                     "binned into cells assuming point-presence of",
-                     "degenerate line segment")
-        warning(msg)
-        cat("\n")
-        if (method == "pixellate") {
-            cat(paste("Total time of trips:", sm, "\n"))
-            cat(paste("Total time without zero length lines:",
-                      sm - sz, "\n"))
-        }
-    }
+#    if (zero.lengths) {
+#        msg <- paste("zero length lines present, time durations binned",
+#                     "into zero length lines present, time durations",
+#                     "binned into cells assuming point-presence of",
+#                     "degenerate line segment")
+#        warning(msg)
+#        cat("\n")
+#        if (method == "pixellate") {
+#            cat(paste("Total time of trips:", sm, "\n"))
+#            cat(paste("Total time without zero length lines:",
+#                      sm - sz, "\n"))
+#        }
+#    }
     image2Grid(res, p4=proj4string(x))
 }
 
@@ -215,7 +216,7 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
 #' 
 #' Trip locations are first interpolated, based on an equal-time spacing
 #' between records. These interpolated points are then "binned" to a grid of
-#' cells.  The time spacing is specified by the "dur"ation argument to
+#' cells.  The time spacing is specified by the \code{dur} (duration) argument to
 #' \code{interpequal} in seconds (i.e. \code{dur=3600} is used for 1 hour).
 #' Shorter time periods will require longer computation with a closer
 #' approximation to the total time spent in the gridded result.
