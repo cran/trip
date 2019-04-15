@@ -2,13 +2,13 @@
 % Please edit documentation in R/AllClass.R
 \docType{class}
 \name{trip-class}
+\alias{trip-class}
 \alias{lines,trip-method}
 \alias{plot,trip,missing-method}
-\alias{show,summary.TORdata-method}
 \alias{show,trip-method}
-\alias{subset,trip-method}
+\alias{show,summary.TORdata-method}
 \alias{summary,trip-method}
-\alias{trip-class}
+\alias{subset,trip-method}
 \title{A class for sets of animal trips (track data).}
 \description{
 An extension of \code{\link[sp]{SpatialPointsDataFrame}} by including
@@ -24,15 +24,18 @@ The object contains all the slots present within a
 \code{\link[sp]{SpatialPointsDataFrame}}, particularly \code{data} which
 contains columns of at least those specified by \code{TOR.columns}.
 }
+
 \examples{
 
 
 showClass("trip")
 
-## Examples of general methods
-## Continuing the example from '?trip-methods:
-utils::example("trip-methods", package="trip",
-               ask=FALSE, echo=FALSE)
+d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
+sp::coordinates(d) <- ~x+y
+## this avoids complaints later, but these are not real track data (!)
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+tr <- trip(d, c("tms", "id"))
+
 summary(tr)
 plot(tr)
 lines(tr)
@@ -46,11 +49,6 @@ tr[1:3, ]
 tr[, 1]
 tr[[1]]
 
-if (exists("porpoise")) {
-    dim(porpoise)
-    names(porpoise)
-    porpoise[porpoise[["id"]] == "GUS", ]
-}
 
 
 }
@@ -61,4 +59,3 @@ if (exists("porpoise")) {
 \code{trip} objects.
 }
 \keyword{classes}
-

@@ -16,10 +16,11 @@ way. Specifying TOR columns by formula would be a useful addition.
 }
 \section{Slots}{
 
- \describe{
-   \item{\code{TOR.columns}:}{2-element vector of class \code{"character"}}
- }
+\describe{
+\item{\code{TOR.columns}:}{2-element vector of class \code{"character"}}
 }
+}
+
 \examples{
 showClass("TimeOrderedRecords")
 tor <- new("TimeOrderedRecords", TOR.columns=c("datetime", "ID"))
@@ -27,4 +28,3 @@ tor <- new("TimeOrderedRecords", TOR.columns=c("datetime", "ID"))
 \seealso{
 \code{\link{TimeOrderedRecords}}, \code{\link{trip}} for creating trip objects, and \code{\link{trip-class}} for that class
 }
-

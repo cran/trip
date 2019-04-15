@@ -9,7 +9,9 @@ speedfilter(x, max.speed = NULL, test = FALSE)
 \arguments{
 \item{x}{trip object}
 
-\item{max.speed}{speed in kilometres per hour}
+\item{max.speed}{speed in kilometres (or other unit) per hour, the unit is kilometres
+if the trip is in longitude latitude coordinates, or in the unit of the
+projection projection (usually metres per hour)}
 
 \item{test}{cut the algorithm short and just return first pass}
 }
@@ -44,15 +46,13 @@ the development of this version.
 
 This algorithm is destructive, and provides little information about
 location uncertainty.  It is provided because it's commonly used
-and provides an illustrative benchmark for further work. 
+and provides an illustrative benchmark for further work.
 
 It is possible for the filter to become stuck in an infinite loop, depending
 on the function passed to the filter.  Several minutes is probably too long
 for hundreds of points, test on smaller sections if unsure.
 }
-\author{
-David Watts and Michael D. Sumner
-}
+
 \references{
 The algorithm comes from McConnell, B. J. and Chambers, C. and Fedak, M. A.
 (1992) Foraging ecology of southern elephant seals in relation to the
@@ -60,7 +60,9 @@ bathymetry and productivity of the southern ocean.  Antarctic Science
 \emph{4} 393-398
 }
 \seealso{
-\code{\link{trip}}
+\code{\link{sda}} for a fast distance angle filter to combine with speed filtering
+}
+\author{
+David Watts and Michael D. Sumner
 }
 \keyword{manip}
-

@@ -3,10 +3,11 @@
 \docType{methods}
 \name{as.trip}
 \alias{as.trip}
-\alias{as.trip,ltraj-method}
 \alias{as.trip-methods}
-\alias{coerce,trip,ltraj-method}
+\alias{as.trip,ltraj-method}
 \alias{ltraj2trip}
+\alias{coerce,trip,ltraj-method}
+\alias{as.trip,track_xyt-method}
 \title{Coercion from other classes to \code{trip} objects}
 \usage{
 as.trip(x, ...)
@@ -31,10 +32,13 @@ Coercing objects to \code{trip} class
 
 }
 }
+
 \examples{
-## Continuing the example from '?trip-methods:
-utils::example("trip-methods", package="trip",
-               ask=FALSE, echo=FALSE)
+ d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
+sp::coordinates(d) <- ~x+y
+## this avoids complaints later, but these are not real track data (!)
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+tr <- trip(d, c("tms", "id"))
 
 if (require(adehabitatLT)) {
     ##l <- as.ltraj.trip(tr)
@@ -42,4 +46,3 @@ if (require(adehabitatLT)) {
     ##as.trip(l)
 }
 }
-

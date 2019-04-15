@@ -1,5 +1,12 @@
 #' trip.
 #'
+#' Functions for accessing and manipulating spatial data for animal
+#' tracking, with straightforward coercion from and to other formats. Filter
+#' for speed and create time spent maps from animal track data. There are
+#' coercion methods to convert between 'trip' and 'ltraj' from 'adehabitatLT', 
+#' and between 'trip' and 'psp' and 'ppp' from 'spatstat'. Trip objects
+#' can be created from raw or grouped data frames, and from types in the 'sp', 
+#' 'sf', 'amt', 'trackeR', and other packages. 
 #' @name trip-package
 #' @docType package
 #' @importFrom grDevices hsv 
@@ -15,7 +22,7 @@ NULL
 #' 
 #' Data set is provided as a 'trip' object. This is the abstract for the work: 
 #' 
-#' "We tracked movments and haulout foraging behavior of walruses instrumented with 
+#' "We tracked movements and haulout foraging behavior of walruses instrumented with 
 #' satellite-linked data loggers from the Alaskan shores of the Chukchi Sea during the 
 #' autumn of 2009 (n=13) and 2010 (n=2)."
 #'  Jay, C. V. and Fischbach, A.S.

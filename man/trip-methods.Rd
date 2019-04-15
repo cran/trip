@@ -2,35 +2,46 @@
 % Please edit documentation in R/AllMethod.R
 \docType{methods}
 \name{trip-methods}
-\alias{[,trip,ANY,ANY,ANY-method}
-\alias{[,trip-method}
-\alias{[[<-,trip,ANY,missing-method}
-\alias{trip}
-\alias{trip,ANY,TimeOrderedRecords-method}
-\alias{trip,SpatialPointsDataFrame,ANY-method}
-\alias{trip,trip,ANY-method}
-\alias{trip,trip,TimeOrderedRecords-method}
 \alias{trip-methods}
-\alias{trip<-}
+\alias{trip}
+\alias{trip,SpatialPointsDataFrame,ANY-method}
+\alias{trip,SpatialPointsDataFrame,TimeOrderedRecords-method}
+\alias{trip,ANY,TimeOrderedRecords-method}
+\alias{trip,trip,ANY-method}
+\alias{trip,grouped_df,ANY-method}
+\alias{trip,data.frame,ANY-method}
+\alias{trip,track_xyt,ANY-method}
+\alias{trip,trackeRdata,ANY-method}
+\alias{trip,mousetrap,ANY-method}
+\alias{trip,sf,ANY-method}
+\alias{trip,telemetry,ANY-method}
+\alias{trip,list,ANY-method}
+\alias{trip,trip,TimeOrderedRecords-method}
+\alias{split,trip,ANY-method}
+\alias{[,trip-method}
+\alias{[,trip,ANY,ANY,ANY-method}
+\alias{[[<-,trip,ANY,missing-method}
 \alias{trip<-,data.frame,character-method}
-\title{Function to handle animal track data, organized as \code{"trip"}s}
+\alias{trip<-}
+\title{Function to handle animal track data, organized as \code{trip} objects}
 \usage{
-trip(obj, TORnames)
+trip(obj, TORnames, correct_all = TRUE)
 
 trip(obj) <- value
 
 \S4method{[}{trip,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
-\item{obj}{A \code{\link[sp]{SpatialPointsDataFrame}}, or an object that can
-be coerced to one, containing at least two columns with the DateTime and ID
-data as per \code{TORnames}.  It can also be a \code{trip} object for
-redefining \code{TORnames}.}
+\item{obj}{A data frame, a grouped data frame or a \code{\link[sp]{SpatialPointsDataFrame}}
+containing at least two columns with the DateTime and ID data as per \code{TORnames}.  See
+Details.}
 
 \item{TORnames}{Either a \code{TimeOrderedRecords} object, or a 2-element
 character vector specifying the DateTime and ID column of \code{obj}}
 
-\item{value}{A 4-element character vector specifying the X, Y, DateTime coordinates 
+\item{correct_all}{logical value, if \code{TRUE} the input data is corrected for common problems}
+
+\item{value}{A 4-element character vector specifying the X, Y, DateTime coordinates
 and ID of \code{obj}.}
 
 \item{x}{trip object}
@@ -46,9 +57,39 @@ A trip object, with the usual slots of a
 \code{data.frame} with \code{Spatial} coordinates.
 }
 \description{
-Create an object of class \code{"trip"}, extending the basic functionality
+Create an object of class \code{trip}, extending the basic functionality
 of \code{\link[sp]{SpatialPointsDataFrame}} by specifying the data columns
 that define the "TimeOrdered" quality of the records.
+}
+\details{
+The original form of \code{trip()} required very strict input as a 'SpatialPointsDataFrame' and
+specifying which were the time and ID columns, but the input can be more flexible. If the object is a
+grouped data frame ('dplyr-style') then the (first) grouping is assumed to define individual trips and that
+columns 1, 2, 3 are the x-, y-, time-coordinates in that order. It can also be a \code{trip} object for
+redefining \code{TORnames}.
+
+The \code{\link[=trip]{trip()}} function can ingest \code{track_xyt}, \code{telemetry}, \code{SpatialPointsDataFrame}, \code{sf},
+\code{trackeRdata}, \code{grouped_df}, \code{data.frame}, \code{tbl_df}, \code{mousetrap}, and in some cases
+lists of those objects. Please get in touch if you think something that should work does not.
+
+Track data often contains problems, with missing values in location or time,
+times out of order or with duplicated times. The \code{correct_all} argument is
+set to \code{TRUE} by default and will report any inconsistencies. Data really should
+be checked first rather than relying on this auto-cleanup. The following problems are common:
+\itemize{
+\item duplicated records (every column with the same value in another row)
+\item duplicated date-time values
+\item missing date-time values, or missing x or y coordinates
+\item records out of order within trip ID
+}
+
+For some data types there's no formal structure, but a simple convention such as
+a set of names in a data frame. For example, the VTrack package has \code{AATAMS1} which may be
+turned into a trip with
+\code{trip(AATAMS1 \%>\% dplyr::select(longitude, latitude, timestamp, tag.ID, everything())}
+In time we can add support for all kinds of variants, detected by the names and contents.
+
+See \href{https://eprints.utas.edu.au/12273/}{Chapter 2 of the trip thesis} for more details.
 }
 \section{Methods}{
 
@@ -61,7 +102,8 @@ functionality.
 
 \item{trip}{\code{signature(obj="SpatialPointsDataFrame",
 TORnames="ANY")}}The main construction.
-
+\item{trip}{\code{signature(obj="SpatialPointsDataFrame",
+TORnames="TimeOrderedRecords")}} Object and TimeOrdered records class
 \item{trip}{\code{signature(obj="ANY", TORnames="TimeOrderedRecords")}:
 create a \code{trip} object from a data frame.}
 
@@ -73,16 +115,44 @@ create a \code{trip} object from a data frame.}
 
 }
 }
+
 \examples{
 
 
 d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
-coordinates(d) <- ~x+y
+
+## the simplest way to create a trip is by order of columns
+
+trip(d)
+
+## or a grouped data frame can be used, the grouping is used as the trip ID
+## library(dplyr)
+## # use everything() to keep all other columns
+## d \%>\% group_by(id) \%>\% select(x, y, tms, everything())
+
+sp::coordinates(d) <- ~x+y
 ## this avoids complaints later, but these are not real track data (!)
-proj4string(d) <- CRS("+proj=laea +ellps=sphere")
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
 (tr <- trip(d, c("tms", "id")))
 
-## don't want adehabitatMA to be loaded as a requirement here
+ ## real world data in CSV
+mi_dat <- read.csv(system.file("extdata/MI_albatross_sub10.csv", package = "trip"), 
+            stringsAsFactors = FALSE)
+## installed subset because the data is quite dense
+## mi_dat <- mi_dat[seq(1, nrow(mi_dat), by = 10), ]
+mi_dat$gmt <- as.POSIXct(mi_dat$gmt, tz = "UTC")
+mi_dat$sp_id <-  sprintf("\%s\%s_\%s_\%s", mi_dat$species, 
+         substr(mi_dat$breeding_status, 1, 1), mi_dat$band, mi_dat$tag_ID)
+sp::coordinates(mi_dat) <- c("lon", "lat")
+## there are many warnings, but the outcome is fine 
+## (sp_id == 'WAi_14030938_2123' has < 3 locations as does LMi_12143650_14257)
+mi_dat <- trip(mi_dat, c("gmt", "sp_id") )
+plot(mi_dat, pch = ".")
+#lines(mi_dat)  ## ugly
+
+mi_dat_polar <- sp::spTransform(mi_dat, "+proj=stere +lat_0=-90 +lon_0=154 +datum=WGS84")
+plot(mi_dat_polar, pch = ".") 
+lines(mi_dat_polar)
 \dontrun{
 ## a simple example with the common fixes required for basic track data
 
@@ -130,10 +200,10 @@ tr <- trip(dat, c("gmt", "seal"))
    library(raster)
 
    ## 3 degrees either side (for half a zone . . .)
-   ext <- as(extent(spTransform(porpoise, CRS(proj4string(wrld_simpl)))) + 3, "SpatialPolygons")
+   ext <- as(extent(sp::spTransform(porpoise, CRS(proj4string(wrld_simpl)))) + 3, "SpatialPolygons")
    proj4string(ext) <- CRS(proj4string(wrld_simpl))
    ## crop to the buffered tracks, and project to its native CRS
-   w <- spTransform(gIntersection(wrld_simpl[grep("United States", wrld_simpl$NAME), ], ext),
+   w <- sp::spTransform(gIntersection(wrld_simpl[grep("United States", wrld_simpl$NAME), ], ext),
     CRS(proj4string(porpoise)))
 
    plot(w)
@@ -144,4 +214,3 @@ tr <- trip(dat, c("gmt", "seal"))
 \code{\link{speedfilter}}, and \code{\link{tripGrid}} for simplistic
 speed filtering and spatial time spent gridding.
 }
-

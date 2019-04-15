@@ -26,7 +26,12 @@ trip_raster <- function(x, grid = NULL, method = "pixellate",  ...) {
 #' @param y Raster* object
 #' @param field attribute from which differences will be calculated, defaults to the time-stamp between trip locations
 #' @examples
-#' example(trip)
+#'  d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
+#' sp::coordinates(d) <- ~x+y
+#' ## this avoids complaints later, but these are not real track data (!)
+#' sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+#' tr <- trip(d, c("tms", "id"))
+#' 
 #' tr$temp <- sort(runif(nrow(tr)))
 #' r <- rasterize(tr)
 #' 
@@ -57,6 +62,9 @@ setMethod("rasterize", signature(x = "trip", y = "missing"), trip_raster)
 setMethod("rasterize", signature(x = "trip", y = "RasterLayer"), 
           function(x, y, field, fun = 'pixellate', ...)
           {
+            if (!is.na(raster::projection(x)) && !is.na(raster::projection(y))) {
+              x <- spTransform(x, raster::projection(y))
+            }
             if (missing(field)) {
               if (!is.null(y)) y <- as(y, "GridTopology")
                raster(tripGrid(x, grid = y,  method = fun, ...))
@@ -104,10 +112,11 @@ setMethod("rasterize", signature(x = "trip", y = "RasterLayer"),
 tripGrid <- function (x, grid=NULL, method="pixellate", ...)
 {
     if (method %in% c("kde", "count")) {
-        msg <- paste("kde and count methods no longer supported",
+        msg <- paste("'kde' and 'count' methods no longer supported, using 'pixellate'",
                      "from trip_1.1-6 and will be ignored,",
                      "see ?tripGrid.interp for legacy function")
         warning(msg)
+        method <- "pixellate"
     }
     if (!is.null(list(...)$dur)) {
         msg <- paste("dur(ation) not necessary for this function from",
@@ -121,11 +130,13 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
                                   data.frame(z=rep(0, prod(grid@cells.dim))))
     res <- as.image.SpatialGridDataFrame(spgdf)
     tor <- x@TOR.columns
-    trip.list <- split.data.frame(x[, tor], x[[tor[2]]])
+    
+   trip.list <- split.data.frame(x[, tor], x[[tor[2]]])
     ow <- .g2ow(grid)
     sm <- 0
     zero.lengths <- FALSE
     sz <- 0
+
     for (this in trip.list) {
         xs <- coordinates(this)[, 1]
         ys <- coordinates(this)[, 2]
@@ -140,9 +151,7 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
             zero.lengths <- TRUE
             zeros <- which(!lngths > 0)
             cc <- coordinates(this)[zeros, , drop=FALSE]
-            op <- options(warn=-1)
-            x.ppp <- ppp(cc[, 1], cc[, 2], window=ow)
-            options(op)
+            suppressWarnings(x.ppp <- ppp(cc[, 1], cc[, 2], window=ow))
             if (method == "pixellate") {
                 v <- pixellate(x.ppp, W=ow, weights=dt[zeros])$v
             }

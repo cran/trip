@@ -2,14 +2,17 @@
 % Please edit documentation in R/coerce.R
 \name{as.Other}
 \alias{as.Other}
-\alias{as.ppp.trip}
 \alias{as.psp.trip}
+\alias{as.track_xyt.trip}
+\alias{as.ppp.trip}
 \alias{explode}
 \title{As ("trip", other-classes)}
 \usage{
 \method{as.ppp}{trip}(X, ..., fatal)
 
 \method{as.psp}{trip}(x, ..., from, to)
+
+as.track_xyt.trip(x, ..., from, to)
 
 explode(x, ...)
 }
@@ -44,21 +47,29 @@ the start and end times, duration and the ID of the segment.
 }
 \examples{
 \dontrun{
-  ## Continuing the example from '?trip-methods:
-utils::example("trip-methods", package="trip",
-           ask=FALSE, echo=FALSE)
+ d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
+sp::coordinates(d) <- ~x+y
+## this avoids complaints later, but these are not real track data (!)
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+tr <- trip(d, c("tms", "id"))
+
  as(tr, "ppp")
 }
 \dontrun{
- ## Continuing the example from '?trip-methods:
-utils::example("trip-methods", package="trip",
-           ask=FALSE, echo=FALSE)
+ d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
+sp::coordinates(d) <- ~x+y
+## this avoids complaints later, but these are not real track data (!)
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+tr <- trip(d, c("tms", "id"))
+
  as.psp.trip(tr)
 }
-## Continuing the example from '?trip-methods:
-utils::example("trip-methods", package="trip",
-           ask=FALSE, echo=FALSE)
+ d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
+sp::coordinates(d) <- ~x+y
+## this avoids complaints later, but these are not real track data (!)
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+tr <- trip(d, c("tms", "id"))
+
 spldf <- explode(tr)
 summary(tr)
 }
-
