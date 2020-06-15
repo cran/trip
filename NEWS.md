@@ -1,3 +1,19 @@
+# trip 1.7.1
+
+* Fixed documentation cross-references to sp topic, thanks to CRAN. 
+
+* Migrate to reproj to avoid rgdal package. Ancient function tripTransform has been removed completely, and 
+spTransform methods are now  defunct and suggest use of `reproj()`. 
+
+* Removed problematic PROJ strings, thanks to Roger Bivand. 
+
+* `readDiag()` and `readArgos()` now read all records from a single text vector after reading
+all raw lines. This means they can be used to read data from mixed text streams.  
+
+* `readDiag()`  no longer converts columns id and iq to factor, and gains arguments `return_trip` and 
+ `read_alt` to control output format. 
+
+
 # trip 1.6.0
 
 ## MAJOR CHANGES
@@ -54,4 +70,4 @@
 
 # trip 1.5.0 and prior
 
-* See file ONEWS. 
+* See file [ONEWS](https://github.com/Trackage/trip/blob/master/inst/ONEWS). 

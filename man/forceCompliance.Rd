@@ -8,13 +8,13 @@ forceCompliance(x, tor)
 }
 \arguments{
 \item{x}{\code{\link{data.frame}} or
-\code{\link[sp]{SpatialPointsDataFrame}}}
+\code{\link[sp]{SpatialPointsDataFrame-class}}}
 
 \item{tor}{character vector of names of date-times and trip ID columns}
 }
 \value{
 \code{\link{data.frame}} or
-\code{\link[sp]{SpatialPointsDataFrame}}.
+\code{\link[sp]{SpatialPointsDataFrame-class}}.
 }
 \description{
 A convenience function, that removes duplicate rows, sorts by the date-times

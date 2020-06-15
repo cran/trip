@@ -6,12 +6,12 @@ Authors@R: c(person("Michael D.","Sumner", role = c("aut", "cre"),
     person("Sebastian", "Luque", role = "ctb"), 
     person("Anthony", "Fischbach", role = "ctb"),
     person("Tomislav", "Hengl", role = "ctb"))
-Version: 1.6.0
+Version: 1.7.1
 Depends: R (>= 3.3.0)
-Imports: geodist, maptools, MASS, methods, raster, sp, spatstat, glue,
-        viridis
-Suggests: adehabitatLT, knitr, rgdal, testthat, covr, rmarkdown,
-        lubridate, dplyr, maps, spelling
+Imports: geodist, maptools, MASS, methods, raster, reproj, sp,
+        spatstat, glue, viridis, traipse, crsmeta
+Suggests: adehabitatLT, knitr, dplyr, testthat, covr, rmarkdown,
+        lubridate, maps, spelling
 Description: Functions for accessing and manipulating spatial data for animal
     tracking, with straightforward coercion from and to other formats. Filter
     for speed and create time spent maps from animal track data. There are
@@ -19,21 +19,21 @@ Description: Functions for accessing and manipulating spatial data for animal
     and between 'trip' and 'psp' and 'ppp' from 'spatstat'. Trip objects
     can be created from raw or grouped data frames, and from types in the 'sp', 
     'sf', 'amt', 'trackeR', 'mousetrap', and other packages. 
-URL: https://github.com/mdsumner/trip
-BugReports: https://github.com/mdsumner/trip/issues
+URL: https://github.com/Trackage/trip
+BugReports: https://github.com/Trackage/trip/issues
 NeedsCompilation: no
 ByteCompile: yes
 License: GPL-3
 LazyData: yes
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Encoding: UTF-8
 Language: en-US
-Packaged: 2019-04-15 13:04:54 UTC; mdsumner
+Packaged: 2020-06-15 08:11:01 UTC; mdsumner
 Author: Michael D. Sumner [aut, cre],
   Sebastian Luque [ctb],
   Anthony Fischbach [ctb],
   Tomislav Hengl [ctb]
 Maintainer: Michael D. Sumner <mdsumner@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-04-15 14:22:39 UTC
+Date/Publication: 2020-06-15 12:10:06 UTC

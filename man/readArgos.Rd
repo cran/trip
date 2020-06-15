@@ -5,12 +5,19 @@
 \alias{readDiag}
 \title{Read Argos "DAT" or "DIAG" files}
 \usage{
-readArgos(x, correct.all = TRUE, dtFormat = "\%Y-\%m-\%d \%H:\%M:\%S",
-  tz = "GMT", duplicateTimes.eps = 0.01,
-  p4 = "+proj=longlat +ellps=WGS84", verbose = FALSE,
-  read_alt = NULL)
+readArgos(
+  x,
+  correct.all = TRUE,
+  dtFormat = "\%Y-\%m-\%d \%H:\%M:\%S",
+  tz = "GMT",
+  duplicateTimes.eps = 0.01,
+  p4 = "+proj=longlat +ellps=WGS84",
+  verbose = FALSE,
+  read_alt = NULL,
+  ...
+)
 
-readDiag(x)
+readDiag(x, return_trip = FALSE, read_alt = 1L, ...)
 }
 \arguments{
 \item{x}{vector of file names of Argos "DAT" or "DIAG" files.}
@@ -31,10 +38,14 @@ pasted together}
 
 \item{read_alt}{is \code{NULL} by default, with longitude and latitude read from the PRV message, if \code{1} or \code{2}
 then attempt is made to read the alternative locations (but these are not always present)}
+
+\item{...}{reserved for future use}
+
+\item{return_trip}{for \code{\link[=readDiag]{readDiag()}} if \code{TRUE} will return a trip object, use \code{read_alt} to control the location}
 }
 \value{
 \code{readArgos} returns a \code{trip} object, if all goes well, or simply a
-\code{\link[sp]{SpatialPointsDataFrame}}.
+\code{\link[sp]{SpatialPointsDataFrame-class}}.
 
 \code{readDiag} returns a \code{data.frame} with 8 columns:
 \itemize{
@@ -61,7 +72,7 @@ DateTime values within ID are allowed: to enforce this the time values are
 moved forward by one second - this is done recursively and is not robust.
 
 If validation fails the function will return a
-\code{\link[sp]{SpatialPointsDataFrame}}.  Files that are not obviously of
+\code{\link[sp]{SpatialPointsDataFrame-class}}.  Files that are not obviously of
 the required format are skipped.
 
 Argos location quality data "class" are ordered, assuming that the available
@@ -80,14 +91,13 @@ location is returned. 1 is a standardized location corresponding to the original
 \section{Warning }{
 
 
-This works on some Argos files I have seen, it is not a guaranteed method
-and is in no way linked officially to Argos.
+This works on some Argos files I have seen.
 }
 
 \examples{
-argosfile <- 
+argosfile <-
   system.file("extdata/argos/98feb.dat", package = "trip", mustWork = TRUE)
-argos <- readArgos(argosfile)   
+argos <- readArgos(argosfile)
 }
 \references{
 The Argos data documentation was (ca. 2003) at
@@ -96,7 +106,7 @@ http://www.argos-system.org/manual.  Specific details on the PRV
 'http://www.cls.fr/manuel/html/chap4/chap4_4_8.htm'.
 }
 \seealso{
-\code{\link{trip}}, \code{\link[sp]{SpatialPointsDataFrame}},
+\code{\link{trip}}, \code{\link[sp]{SpatialPointsDataFrame-class}},
 \code{\link{adjust.duplicateTimes}}, for manipulating these data, and
 \code{\link{argos.sigma}} for relating a numeric value to Argos quality
 "classes".

@@ -1,9 +1,3 @@
-# track_distance <- function(lon, lat, group = NULL) {
-#   if (is.null(group)) group <- "1"
-#   x <- tibble::tibble(lon = lon, lat = lat, group = as.character(group))
-#   unlist(lapply(split(x[c("lon", "lat")], x[["group"]])[unique(x[["group"]])], 
-#                 function(atrip) geodist::geodist(atrip, sequential = TRUE, pad = TRUE, measure = "haversine")))
-# }
 
 ##' @rdname trip-internal
 .distances <- function(x) {
@@ -14,7 +8,6 @@
 }
 
 
-##trackDistance <- function(x) UseMethod("trackDistance")
 
 
 #' Determine distances along a track
@@ -33,8 +26,8 @@
 #' Distance values are in the units of the input coordinate system when longlat
 #' is FALSE, and in kilometres when longlat is TRUE.
 #'
-#' This originally used \code{\link[sp]{spDistsN1}} but now implements the sp
-#' \code{gcdist} source directly in R.
+#' This originally used \code{\link[sp]{spDistsN1}}, then implemented the sp
+#' \code{gcdist} source directly in R, and now uses \code{\link[geodist]{geodist}}.
 #'
 #' @aliases trackDistance trackDistance.default trackDistance.trip
 #' @param x1 trip object, matrix of 2-columns, with x/y coordinates OR a vector
@@ -46,13 +39,13 @@
 #' @param prev if TRUE and x1 is a trip, the return value has a padded end
 #' value (\"prev\"ious), rather than start (\"next\")
 #' @return Vector of distances between coordinates.
-#' @references Original source taken from sp package.
-#' @author Roger Bivand and Michael Sumner
+#' @references Original source taken from sp package, but now using Helmert from Karney (2013)
+#' see the geodist package.
 #' @examples
 #'  d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
 #' sp::coordinates(d) <- ~x+y
 #' ## this avoids complaints later, but these are not real track data (!)
-#' sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+#' sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere", doCheckCRSArgs = FALSE)
 #' tr <- trip(d, c("tms", "id"))
 #' 
 #'  ## the method knows this is a trip, so there is a distance for every
@@ -67,8 +60,7 @@
 #' ## we get NA at the start, end and at transitions between trips
 #'
 #'  \dontrun{
-#'  require(rgdal)
-#'  trackAngle(tr)
+#'  angles <- trackAngle(walrus818)
 #'  }
 #' @export trackDistance
 trackDistance <- function(x1, y1, x2, y2, longlat=TRUE, prev = FALSE) UseMethod("trackDistance")
@@ -89,12 +81,8 @@ trackDistance.default <- function(x1, y1, x2, y2, longlat=TRUE, prev = FALSE) {
   if (nx != length(y1) | nx != length(x2) | nx != length(y2))
     stop("arguments must have equal lengths")
   if (longlat) {
-    # browser()
-    # rbenchmark:::benchmark(geodist::geodist(cbind(lon = c(x1, tail(x2, 1)), lat = c(y1, tail(y2, 1))), paired = FALSE, sequential = TRUE, measure = "vincenty")/1000, 
-    #                        geodist::geodist(cbind(x1, y1), cbind(x2, y2), paired = TRUE, sequential = TRUE, measure = "vincenty")/1000)
-    # 
-    ##.gcdist.c(x1, y1, x2, y2)  ## this is faster than geodist for small data
-    geodist::geodist(cbind(lon = c(x1, tail(x2, 1)), lat = c(y1, tail(y2, 1))), sequential = TRUE, paired = FALSE, measure = "vincenty")/1000
+    geodist::geodist(cbind(lon = c(x1, tail(x2, 1)), lat = c(y1, tail(y2, 1))), 
+                     sequential = TRUE, paired = FALSE, measure = "geodesic")/1000
   } else sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 }
 
@@ -138,11 +126,12 @@ homedist <- function(x, home = NULL) {
     x0 <- coordinates(x[x[[tor[2L]]] == ids[i], ])
     if (is.null(home)) home <- x0[1, , drop = FALSE]
     if (longlat) {
-      dists[i] <- max(geodist::geodist(x0, home, measure = "haversine"))/1000
+      #colnames(x0) <- c("x", "y")
+      
+      dists[i] <- suppressMessages(max(geodist::geodist(x0, home, measure = "geodesic"))/1000)
     } else {
       dists[i] <- max(sqrt((x0[,1] - home[1])^2 + (x0[,2] - home[2])^2))
     }
-    #dists[i] <- max(spDistsN1(x0, home, longlat = longlat))
   }
   dists
 }

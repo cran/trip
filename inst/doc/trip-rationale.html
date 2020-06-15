@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>trip-rationale</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">trip-rationale</h1>
+
+
+
+<div id="why-is-trip-the-way-it-is" class="section level2">
+<h2>Why is trip the way it is?</h2>
+<p>The trip package was born as an extension to the <a href="https://CRAN.r-project.org/package=sp">sp</a> package. We could leverage many features from the <code>Spatial</code> classes.</p>
+<ul>
+<li>plotting</li>
+<li>input/output to file formats</li>
+<li>map projection transformations</li>
+<li>formal validation as object types</li>
+<li>a core stack of software tools for geometry, distance and look-up calculations</li>
+</ul>
+<p>These were extremely valuable features and allowed a relatively easy extension to the <code>SpatialPointsDataFrame</code> to act like a grouped and ordered data frame. The main benefit at the time was automated checks on data validity, for missing values in coordinates, date-times and identifiers, for zero-length spatial steps, zero-duration temporal steps, and for basic assumptions about the order of records within a tag identifier.</p>
+<p>Sadly it’s the last item in the last that is in the worst shape, we don’t have a core set of packages that just do their one job, a package for distances, for areas, for projections, for point-in-polygon - what we have is competing monolithic packages with their own ways of going about things, none of which ever fully fit the need when you are trying to build something.</p>
+<p>I hope that trip can get tidied up in a sensible way, be based on the tidyverse more fully and abandon some of these messier bogeys. It’s definitely possible to hide these details and change things in S4, but it’s probably more sensible to start a <code>trip2</code> with tidyr bundling, and probably <code>vctrs</code> types.</p>
+<p>At the time I thought that the <a href="http://www.argos-system.org/">Argos Service</a> might become more transparent and that the tracking community would forever value a shared resource of global tracking data. But, to this day I think nobody knows why Argos would give records with a different location at the same date-time stamp, and we certainly haven’t been careful to store and preserve all the biologging data that has been collected.</p>
+<p>It might seem like a modern approach in R spatial is the way to go, but I want to share my thoughts about why I don’t think this is looking particularly good.</p>
+</div>
+<div id="new-frameworks" class="section level2">
+<h2>New frameworks</h2>
+<p>It’s bugged me for years that there’s no coherent powerful way to deal with tracking data. It’s such a fundamental and simple concept, it matches the vast majority of all data we collect, one-dimensional records of values streaming in the door grouped by identifiers, ordered by time, possibly including other variables measured along with location and time.</p>
+<p>Tracking data is location measured over time for an object. Trajectories. GPS data. Argos satellite tracking. Locations from light level geo-location. Inferred movement from sensor arrays. Mostly, we mean GPS data but the animal movement fields have established these kinds of data long ago. The human sciences are catching up as we deal with endless streams of these data from endless new sources in our economies and environment.</p>
+<p>The Simple Features standard (SF) precludes straightforward representation of track data. It’s as simple as that. The R sf package aligns very closely to SF. If you are intending to extend sf for trajectories you should be aware of these limitations. There are many packages that extended sp for track data that hit these problems. The sf package does not add anything new to this problem. If you can extend sf for these data, you are no longer aligned to SF.</p>
+<p>The candidates are: lines, multilines, multipoints, points. Lines are an ordered sequence of locations, multilines are sets of those. The sequence can store only its location (and optional Z, and optional M), it otherwise has only a single row of data that can be stored with it. That’s what “one line” means, or “one multiline”: this is a complex geometry object linked to a single row of data. Ok ok, what about multipoint? A multipoint is an <em>unordered</em> set of locations, with no higher grouping. Again we can store optionally Z and or M in SF, but we cannot store a real date-time and an elevation. We cannot include temperature or size or visibility or salinity or any other of many continuous properties measured in the real world. We can store a single discrete property against the row that links to this group of locations.</p>
+<p>So points then. What is a point? An pair of X,Y coordinates, a pair of long,lat coordinates (or both, explicitly or implicitly). This can sit in a row with other data, with any other data, the exact time, elevation, temperature, salinity, cloud cover, humidity, absolutely anything we want. So what should we do? Rewrite sf from the ground up? (Maybe).</p>
+<p>These <em>geometric</em> parts of the data are coordinates, they are x, y, z, time. There are many ways of expressing these positional values but pretty commonly we stick to relative locations to the surface of the earth, or some local coordinate system either formal or informal. What tools do we have for these data?</p>
+<blockquote>
+<p>one-dimensional records of values streaming in the door grouped by identifiers, ordered by time, possibly including other variables measured along with location and time.</p>
+</blockquote>
+<p>A table of data, grouped-by identifiers, arranged by date-time, with other variables as required. I often use dplyr and ggplot2 for these kinds of data. Read table, group by ID, arrange by time, nominate aes-thetics x, y, colour, lwd and add a geometry to link the records together.</p>
+<blockquote>
+<p>But dplyr/ggplot2 is not coordinate system aware!</p>
+</blockquote>
+<p>Well it is date-time aware,and factor aware, and all we need to add is a coordinate reference system for our locations (it’s not hard to keep track, trust me). My personal forward-looking idea at the moment is to leverage data frame bundling, so that the special columns are simply bundled together and everything else is tidyverse-ready.</p>
+</div>
+<div id="what-i-actually-recommend-to-folks-learning-r" class="section level2">
+<h2>What I actually recommend to folks learning R</h2>
+<ol style="list-style-type: decimal">
+<li><p>Learn to use dplyr and ggplot2 to full effect to tidy, manage, and visualize your tracking data.</p></li>
+<li><p>Investigate the dozens of existing tracking packages on CRAN and elsewhere, they likely include the filtering, smoothing, augmenting, modelling, remapping, gridding, re-summarizing algorithms that you will need. You can convert tidy data into these formats. There are many converters between formats, and between sf, sp, adehabitat, move, trip and other types. They just aren’t collected all together.</p></li>
+<li><p>Write your own analytical technique in this ecosystem.</p></li>
+</ol>
+<p>Still want to extend sf in an entirely new way for tracking data? Check out trip, move, adehabitat, trajectories, and many others. What’s missing from them? Can they be consolidated? What is common to them? Can it be simpler? Why are there so many movement packages?</p>
+</div>
+<div id="other-things-to-check-out" class="section level1">
+<h1>Other things to check out</h1>
+<ul>
+<li>geodist - package based on Mapbox and Karney distance calculations, very fast</li>
+<li>terra - replacement for the raster package, based on the spat library</li>
+<li>stars - generalization of the raster package, based on the sf “library”</li>
+<li>geosphere - general geo toolkit, includes GeographicLib at least in part</li>
+<li>silicate - a topological primitives approach to geometry-data-structures in R</li>
+<li>GeographicLib - a modern distance and area lib, based on Karney 2013</li>
+<li>Apache Arrow - a modern take on data science, this is where true consolidation will come from</li>
+<li>Geolocation book - <a href="https://geolocationmanual.vogelwarte.ch/" class="uri">https://geolocationmanual.vogelwarte.ch/</a></li>
+</ul>
+<p>The SpatiaTemporal Task View is in need a massive update for the Moving objects, trajectories section see this list here: <a href="https://gist.github.com/mdsumner/0a3cb0e58bf9d37b782943ac269e1eff" class="uri">https://gist.github.com/mdsumner/0a3cb0e58bf9d37b782943ac269e1eff</a> and this new task view in-progress <a href="https://github.com/rociojoo/CranTaskView-Track" class="uri">https://github.com/rociojoo/CranTaskView-Track</a>.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,12 +1,19 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+<!-- badges: start -->
+
+[![R build
+status](https://github.com/Trackage/trip/workflows/R-CMD-check/badge.svg)](https://github.com/Trackage/trip/actions)
+<!-- badges: end -->
+
 [![Travis-CI Build
 Status](http://badges.herokuapp.com/travis/Trackage/trip?branch=master&env=BUILD_NAME=trusty_release&label=linux)](https://travis-ci.org/Trackage/trip)
 [![OSX Build
 Status](http://badges.herokuapp.com/travis/Trackage/trip?branch=master&env=BUILD_NAME=osx_release&label=osx)](https://travis-ci.org/Trackage/trip)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/Trackage/trip?branch=master&svg=true)](https://ci.appveyor.com/project/Trackage/trip)[![Coverage\_Status](https://img.shields.io/codecov/c/github/Trackage/trip/master.svg)](https://codecov.io/github/Trackage/trip?branch=master)
+[![Build
+status](https://ci.appveyor.com/api/projects/status/e2r8t15huw9yopbq?svg=true)](https://ci.appveyor.com/project/mdsumner/trip)
+[![Coverage\_Status](https://img.shields.io/codecov/c/github/Trackage/trip/master.svg)](https://codecov.io/github/Trackage/trip?branch=master)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/trip)](https://cran.r-project.org/package=trip)
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/trip)](https://cran.r-project.org/package=trip)
 
@@ -77,10 +84,9 @@ functions in related projects.
 ## Simple data filtering and time-spent gridding
 
 Some simple data summary methods have gone out of favour or been
-ignored, and trip provides direct acesss to the `speedfilter()`,
-`sdafilter()` and `rasterize()` functions for straightforward data
-filtering on maximum speed, minimum angle/distance, and
-time-spent-in-area gridding.
+ignored, and trip provides direct access to the `speedfilter()`, `sda()`
+and `rasterize()` functions for straightforward data filtering on
+maximum speed, minimum angle/distance, and time-spent-in-area gridding.
 
 There is a `homedist()` function to calculate the maximum distance from
 each trip’s starting point, and various old-school functions. Some of
@@ -132,6 +138,11 @@ twilight zone between MULTIPOINTs and LINESTRINGs as it is now.
 Please me know what you think via
 [Issues](https://github.com/Trackage/trip/issues).
 
-Please note that this project is released with a [Contributor Code of
-Conduct](CONDUCT.md). By participating in this project you agree to
-abide by its terms.
+-----
+
+\#\# Code of Conduct
+
+Please note that the trip project is released with a [Contributor Code
+of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.

@@ -32,7 +32,7 @@ chlorophyll.
  d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
 sp::coordinates(d) <- ~x+y
 ## this avoids complaints later, but these are not real track data (!)
-sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere", doCheckCRSArgs = FALSE)
 tr <- trip(d, c("tms", "id"))
 
  tg <- tripGrid(tr)
@@ -40,7 +40,7 @@ tr <- trip(d, c("tms", "id"))
 }
 }
 \seealso{
-Similar functions in sp \code{\link[sp]{sp.theme}},
+Similar functions in sp \code{\link[sp]{spplot}},
 \code{\link[sp]{bpy.colors}}
 }
 \keyword{color}

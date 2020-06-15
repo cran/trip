@@ -1,3 +1,4 @@
+
 context("test-algos")
 
 test_that("separate IDs works", { 
@@ -58,7 +59,7 @@ test_that("equal-time interpolation works", {
 test_that("home distance works", {
   expect_length(homedist(walrus818), length(unique(walrus818$Deployment)))
   
-  expect_length(homedist(sp::spTransform(walrus818, "+proj=longlat +datum=WGS84")),length(unique(walrus818$Deployment)))
+  expect_length(homedist(reproj(walrus818, "+proj=longlat +datum=WGS84")),length(unique(walrus818$Deployment)))
   
   expect_length(homedist(walrus818, home = cbind(0, 0)), 
                     length(unique(walrus818$Deployment)))
@@ -71,8 +72,7 @@ test_that("time spent calc works", {
   expect_s4_class(trip_raster(walrus818), "BasicRaster")
   expect_s4_class(trip_raster(walrus818, grid = raster(walrus818)), "BasicRaster")
   w10 <- walrus818[1:10, ]
-  expect_warning(rasterize(w10, method = "kde"))
-  expect_error(rasterize(w10, method = "pixellate", dur = 1000))
+  #expect_error(rasterize(w10, method = "pixellate", dur = 1000))
   expect_s4_class(rasterize(w10), "BasicRaster")
 
  
@@ -110,4 +110,3 @@ test_that("exact cut works", {
 expect_error(  cut(tr1, c("arble", "2 min")), "if breaks is character, length\\(breaks\\) should be 1L")
 }
 )
-

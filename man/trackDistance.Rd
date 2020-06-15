@@ -21,7 +21,7 @@ of x start coordinates}
 \item{longlat}{if FALSE, Euclidean distance, if TRUE Great Circle distance}
 
 \item{prev}{if TRUE and x1 is a trip, the return value has a padded end
-value ("prev"ious), rather than start ("next")}
+value (\"prev\"ious), rather than start (\"next\")}
 }
 \value{
 Vector of distances between coordinates.
@@ -40,14 +40,14 @@ The \code{prev} argument is ignore unless x1 is a trip.
 Distance values are in the units of the input coordinate system when longlat
 is FALSE, and in kilometres when longlat is TRUE.
 
-This originally used \code{\link[sp]{spDistsN1}} but now implements the sp
-\code{gcdist} source directly in R.
+This originally used \code{\link[sp]{spDistsN1}}, then implemented the sp
+\code{gcdist} source directly in R, and now uses \code{\link[geodist]{geodist}}.
 }
 \examples{
  d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
 sp::coordinates(d) <- ~x+y
 ## this avoids complaints later, but these are not real track data (!)
-sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere")
+sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere", doCheckCRSArgs = FALSE)
 tr <- trip(d, c("tms", "id"))
 
  ## the method knows this is a trip, so there is a distance for every
@@ -62,13 +62,10 @@ trackDistance(tr)
 ## we get NA at the start, end and at transitions between trips
 
  \dontrun{
- require(rgdal)
- trackAngle(tr)
+ angles <- trackAngle(walrus818)
  }
 }
 \references{
-Original source taken from sp package.
-}
-\author{
-Roger Bivand and Michael Sumner
+Original source taken from sp package, but now using Helmert from Karney (2013)
+see the geodist package.
 }
