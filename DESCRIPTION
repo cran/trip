@@ -6,11 +6,11 @@ Authors@R: c(person("Michael D.","Sumner", role = c("aut", "cre"),
     person("Sebastian", "Luque", role = "ctb"), 
     person("Anthony", "Fischbach", role = "ctb"),
     person("Tomislav", "Hengl", role = "ctb"))
-Version: 1.8.0
+Version: 1.8.5
 Depends: R (>= 3.3.0)
-Imports: geodist, maptools, MASS, methods, raster, reproj, sp,
-        spatstat, glue, viridis, traipse (>= 0.2.0), crsmeta, dplyr,
-        rlang
+Imports: geodist, MASS, methods, raster, reproj, sp, spatstat.geom,
+        spatstat.core, glue, viridis, traipse (>= 0.2.0), crsmeta,
+        dplyr, rlang
 Suggests: adehabitatLT, knitr, testthat, covr, rmarkdown, lubridate,
         maps, spelling
 Description: Functions for accessing and manipulating spatial data for animal
@@ -30,11 +30,11 @@ VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 Encoding: UTF-8
 Language: en-US
-Packaged: 2020-10-28 09:13:10 UTC; mdsumner
+Packaged: 2021-03-16 04:31:51 UTC; mdsumner
 Author: Michael D. Sumner [aut, cre],
   Sebastian Luque [ctb],
   Anthony Fischbach [ctb],
   Tomislav Hengl [ctb]
 Maintainer: Michael D. Sumner <mdsumner@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-10-28 10:10:02 UTC
+Date/Publication: 2021-03-16 07:00:03 UTC

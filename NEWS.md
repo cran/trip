@@ -1,3 +1,10 @@
+# trip 1.8.5
+
+* Updated to new spatstat version 2. 
+
+* Removed import of maptools. 
+
+
 # trip 1.8.0
 
 * Updated and fixed some tests thanks to CRAN. 

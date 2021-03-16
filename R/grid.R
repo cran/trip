@@ -50,15 +50,6 @@ trip_raster <- function(x, grid = NULL, method = "pixellate",  ...) {
 #' rasterize(tr, r, field = "tms")
 #' rasterize(tr, r)
 #'
-#'
-#' library(raster)
-#' r2 <- aggregate(r, fact = 4)
-#' rasterize(tr, grid = r2)
-#' rasterize(tr, method = "density")
-#' rasterize(tr, method = "density", grid = r2)
-#' rasterize(tr, r2, field = "temp")
-#' rasterize(tr, r2, field = "tms")
-#' rasterize(tr, r2)
 #' }
 #'
 #' @return RasterLayer
@@ -96,7 +87,7 @@ traipse_time_spent <- function(xx, grid = NULL) {
   if (is.null(grid)) {
     grid <- makeGridTopology(xx)
   }
-  x.psp <- spatstat::as.psp(xx)
+  x.psp <- spatstat.geom::as.psp(xx)
   xy <- coordinates(xx)
   dd <- data.frame(x = xy[,1], y = xy[,2],
                    time = xx[[getTORnames(xx)[1]]],
@@ -112,14 +103,14 @@ traipse_time_spent <- function(xx, grid = NULL) {
   }
   dt <- do.call(rbind, split_df)[["dt"]]
   dt_na <- dt[!is.na(dt)]
-  lngths <- spatstat::lengths.psp(x.psp)
+  lngths <- spatstat.geom::lengths_psp(x.psp)
   zeros <- which(!lngths > 0)
   ow <- .g2ow(grid)
   if (length(zeros) > 1) {
-    grd <- spatstat::pixellate(x.psp[-zeros], W= ow,
+    grd <- spatstat.geom::pixellate(x.psp[-zeros], W= ow,
                                weights=(dt_na/lngths)[-zeros])
   } else {
-    grd <- spatstat::pixellate(x.psp, W=ow,
+    grd <- spatstat.geom::pixellate(x.psp, W=ow,
                                weights=dt_na/lngths)
   }
 
@@ -170,7 +161,8 @@ traipse_time_spent <- function(xx, grid = NULL) {
 #' one column "z" containing the time spent in each cell in seconds.
 #' @keywords manip
 #' @export tripGrid
-#' @importFrom spatstat psp ppp [.psp pixellate pixellate.psp lengths.psp density.ppp density.psp owin
+#' @importFrom spatstat.core density.ppp density.psp
+#' @importFrom spatstat.geom psp ppp [.psp pixellate pixellate.psp lengths_psp  owin
 tripGrid <- function (x, grid=NULL, method="pixellate", ...)
 {
     if (method %in% c("kde", "count")) {
@@ -206,7 +198,7 @@ tripGrid <- function (x, grid=NULL, method="pixellate", ...)
         x.psp <- psp(xs[-length(xs)], ys[-length(ys)], xs[-1],
                                ys[-1], window=ow)
 
-        lngths <- lengths.psp(x.psp)
+        lngths <- lengths_psp(x.psp)
         if (any(!lngths > 0)) {
             ## trim psp objects (0-lines give NaNs)
             zeros <- which(!lngths > 0)
