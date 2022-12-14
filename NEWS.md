@@ -1,3 +1,12 @@
+# trip 1.8.7
+
+* `filter_penSS()` is removed, it didn't really work reliably and has no known users. 
+
+* Updated DESCRIPTION, citation, help examples, removed disallowed warning suppression,
+added return value documentation, thanks to CRAN. 
+
+* Updated to new spatstat.explore (removed spatstat.core). 
+
 # trip 1.8.5
 
 * Updated to new spatstat version 2. 

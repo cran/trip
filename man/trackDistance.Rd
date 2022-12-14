@@ -42,13 +42,12 @@ is FALSE, and in kilometres when longlat is TRUE.
 
 This originally used \code{\link[sp]{spDistsN1}}, then implemented the sp
 \code{gcdist} source directly in R, and now uses \code{\link[geodist]{geodist}}.
+
+Please see the traipse package for a more modern approach.
 }
 \examples{
  d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
-sp::coordinates(d) <- ~x+y
-## this avoids complaints later, but these are not real track data (!)
-sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere", doCheckCRSArgs = FALSE)
-tr <- trip(d, c("tms", "id"))
+ tr <- trip(d, c("tms", "id"))
 
  ## the method knows this is a trip, so there is a distance for every
  ## point, including 0s as the start and at transitions between
@@ -57,13 +56,11 @@ trackDistance(tr)
 
 ## the default method does not know about the trips, so this is
 ##(n-1) distances between all points
-## trackDistance(coordinates(tr), longlat = FALSE)
+trackDistance(coordinates(tr), longlat = FALSE)
 
 ## we get NA at the start, end and at transitions between trips
 
- \dontrun{
  angles <- trackAngle(walrus818)
- }
 }
 \references{
 Original source taken from sp package, but now using Helmert from Karney (2013)

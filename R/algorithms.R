@@ -15,7 +15,7 @@
 #' @return
 #'
 #' A new set of ID levels, named following the pattern that "ID" split into 3
-#' would provided "ID", "ID\_2" and "ID\_3".
+#' would provided "ID", "ID_2" and "ID_3".
 #' @section Warning:
 #'
 #' It is assumed that each vector provides is sorted by \code{gapdata} within
@@ -85,7 +85,7 @@ sepIdGaps <- function(id, gapdata, minGap=3600 * 24 * 7) {
 #' date-time boundaries. (If the latter these must encompass all the time range of
 #' the entire trip object.)
 #' @param \dots Unused arguments.
-#' @return
+#' @return list of S4 trip objects, each with aligned boundaries in time based on cutting the input into intervals
 #'
 #' A list of trip objects, named by the time boundary in which they lie.
 #' @author Michael D. Sumner and Sebastian Luque

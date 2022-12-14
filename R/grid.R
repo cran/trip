@@ -33,17 +33,14 @@ trip_raster <- function(x, grid = NULL, method = "pixellate",  ...) {
 #' @param field attribute from which differences will be calculated, defaults to the time-stamp between trip locations
 #' @examples
 #'  d <- data.frame(x=1:10, y=rnorm(10), tms=Sys.time() + 1:10, id=gl(2, 5))
-#' sp::coordinates(d) <- ~x+y
-#' ## this avoids complaints later, but these are not real track data (!)
-#' sp::proj4string(d) <- sp::CRS("+proj=laea +ellps=sphere", doCheckCRSArgs = FALSE)
 #' tr <- trip(d, c("tms", "id"))
 #'
 #' tr$temp <- sort(runif(nrow(tr)))
 #' r <- rasterize(tr)
 #'
 #' rasterize(tr, grid = r)
+#' \donttest{
 #' rasterize(tr, r, field = "temp")
-#' \dontrun{
 #' rasterize(tr, method = "density")
 #' rasterize(tr, method = "density", grid = r)
 #'
@@ -161,7 +158,7 @@ traipse_time_spent <- function(xx, grid = NULL) {
 #' one column "z" containing the time spent in each cell in seconds.
 #' @keywords manip
 #' @export tripGrid
-#' @importFrom spatstat.core density.ppp density.psp
+#' @importFrom spatstat.explore density.ppp density.psp
 #' @importFrom spatstat.geom psp ppp [.psp pixellate pixellate.psp lengths_psp  owin
 tripGrid <- function (x, grid=NULL, method="pixellate", ...)
 {
@@ -398,6 +395,7 @@ countPoints <- function (x, dur=1, grid=NULL)
 #' @param adjust2longlat assume cell size is in kilometres and provide simple
 #' adjustment for earth-radius cells at the north-south centre of the grid
 #' @keywords manip
+#' @return S4 class GridTopology with properties set variously from input parameters
 #' @export makeGridTopology
 makeGridTopology <- function (obj, cells.dim=c(100, 100),
                               xlim=NULL, ylim=NULL, buffer=0, cellsize=NULL,
