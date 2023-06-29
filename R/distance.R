@@ -1,7 +1,7 @@
 
 ##' @rdname trip-internal
 .distances <- function(x) {
-  proj <- is.projected(x)
+  proj <- sp_is_projected(x)
   if (is.na(proj)) proj <- FALSE
   lapply(split(x, x[[getTORnames(x)[2]]]), function(x) trackDistance(coordinates(x), longlat = !proj))
 
@@ -58,7 +58,7 @@
 #'
 #' ## we get NA at the start, end and at transitions between trips
 #'
-#'  angles <- trackAngle(walrus818)
+#'  angles <- trackAngle(tr)
 #' @export trackDistance
 trackDistance <- function(x1, y1, x2, y2, longlat=TRUE, prev = FALSE) UseMethod("trackDistance")
 
@@ -114,7 +114,7 @@ homedist <- function(x, home = NULL) {
   ids <- unique(x[[tor[2L]]])
   dists <- numeric(length(ids))
   names(dists) <- as.character(ids)
-  longlat <- !is.projected(x)
+  longlat <- !sp_is_projected(x)
   if (is.na(longlat)) {
     longlat <- TRUE
     warning("coordinate system is NA, assuming longlat . . .")

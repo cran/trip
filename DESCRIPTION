@@ -6,7 +6,7 @@ Authors@R: c(person("Michael D.","Sumner", role = c("aut", "cre"),
     person("Sebastian", "Luque", role = "ctb"), 
     person("Anthony", "Fischbach", role = "ctb"),
     person("Tomislav", "Hengl", role = "ctb"))
-Version: 1.9.0
+Version: 1.10.0
 Depends: R (>= 3.3.0)
 Imports: geodist, MASS, methods, raster, reproj, sp, spatstat.geom,
         spatstat.explore, glue, viridis, traipse (>= 0.2.0), crsmeta,
@@ -30,11 +30,11 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 Language: en-US
 RoxygenNote: 7.2.3
-Packaged: 2023-06-07 23:22:09 UTC; mdsumner
+Packaged: 2023-06-28 06:57:27 UTC; mdsumner
 Author: Michael D. Sumner [aut, cre],
   Sebastian Luque [ctb],
   Anthony Fischbach [ctb],
   Tomislav Hengl [ctb]
 Maintainer: Michael D. Sumner <mdsumner@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-06-07 23:50:02 UTC
+Date/Publication: 2023-06-29 14:30:02 UTC
